@@ -76,7 +76,8 @@
         storeServingCells,
         storeServingCells_selected,
     } from "../../src/lib/store.js";
-import Index from "./index.svelte";
+    
+    import Index from "./index.svelte";
 
     let table1PageSize = 10;
     let table1CurrentPage = 1;
