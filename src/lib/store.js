@@ -25,6 +25,14 @@ export const storeNearbySitesLimit = writable(100);
 export const storeNearbySitesRadius = writable(2000.0);
 
 export const storeBoundaries = writable([]);
+export const storeBoundaries_selected = writable([]);
+export const storeBoundaryData = writable({});
+
+export const storeSitesInBoundary = writable([]);
+export const storeSiteIdsInBoundary = writable([]);
+export const storeSiteDetails = writable([]);
+export const storeSiteCells = writable([]);
+export const storeSimulation = writable({});
 
 export const storeServingCells = writable([]);
 export const storeServingCells_selected = writable([]);
