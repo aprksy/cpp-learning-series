@@ -8,6 +8,7 @@ import {
     storeSiteCells,
     storeSimulation,
 } from "$lib/store";
+import * as map from "$lib/maps";
 
 const groupNames = ["Poor", "Fair", "Good", "Excellent"];
 const groupLimits = [-200, -110, -102, -97, 0];
@@ -52,6 +53,7 @@ export async function fetchBoundary(id) {
     let result = await res.json();
     storeBoundaryData.set(result);
     console.log(result)
+    map.drawBoundary(map.mainMap, result);
 }
 
 export async function fetchSiteIntersects(date, region, boundaryId) {
@@ -135,5 +137,6 @@ export async function doSimulation(date, region, boundaryId, tile, gNames, gLimi
     let result = await res.json();
     console.log(result)
     storeSimulation.set(result);
+    map.drawTileKpi(map.mainMap, result["original"]["tiles"], result["tiles"]);
 }
 
