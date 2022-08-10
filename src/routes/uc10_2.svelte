@@ -53,6 +53,8 @@
         MultiSelect,
         Link,
         Pagination,
+        TileGroup, 
+        RadioTile,
     } from "carbon-components-svelte";
     import { Upload, View, TreeView, Area, AreaCustom, WatsonHealthCircleMeasurement, ChartNetwork, Reset, CheckboxChecked, OrderDetails, Launch, Settings, Number_0, JoinRight } from "carbon-icons-svelte";
     import Drawer from 'svelte-drawer-component';
@@ -90,6 +92,7 @@
 
     let isSideNavOpen = false;
     let moduleName = "Usecase 10 - Blacksite v1.1";
+    let selectedSiteIndex = 0;
     let shouldFilterItem = mainUi.shouldFilterItem;
 
     onMount(async () => {
@@ -206,48 +209,16 @@
     
         <!-- Fine tune panel -->
         <div class="container col start border-right" style="width:calc(33% - 1px); height:100%;">
-            <!-- select site -->
-            <div class="container col" style="width:calc(100%); height:108px; align-items: center; padding: 14px;">
-                <div style="width:100%; height:40px;">
-                    <MultiSelect
-                        size="sm"
-                        label="Filter by site(s)"
-                        items={[
-                            { id: "0", text: "Slack" },
-                            { id: "1", text: "Email" },
-                            { id: "2", text: "Fax" },
-                        ]}
-                        />
-                </div>
-                <!-- select technology & band -->
-                <div class="container row space-between" style="width:calc(100%); height:40px; align-items: center;">
-                    <div style="width:50%">
-                        <MultiSelect
-                            size="sm"
-                            label="Filter by technology(s)"
-                            items={[
-                                { id: "0", text: "Slack" },
-                                { id: "1", text: "Email" },
-                                { id: "2", text: "Fax" },
-                            ]}
-                            />
-                    </div>
-                    <div style="width:10px"></div>
-                    <div style="width:50%">
-                        <MultiSelect
-                            size="sm"
-                            label="Filter by band(s)"
-                            items={[
-                                { id: "0", text: "Slack" },
-                                { id: "1", text: "Email" },
-                                { id: "2", text: "Fax" },
-                            ]}
-                            />
-                    </div>
-                </div>
-            </div>
+            <TileGroup
+                legend="Simulate site dismantle"
+                on:select={({ detail }) => (selected = detail)}
+            >
+                {#each values as value}
+                    <RadioTile {value} checked={selected === value}>{value}</RadioTile>
+                {/each}
+            </TileGroup>
             <!-- cell list panel -->
-            <div class="container row start border-bottom" style="calc(100% - 60px); height:680px; padding: 0 14px;">
+            <div class="container row start border-bottom" style="calc(100% - 60px); height:380px; padding: 0 14px;">
                 <div class="container col space-between" style="width:100%; overflow-y:scroll; overflow-x: hidden; background-color:#eee;">
                     <DataTable
                         selectable
