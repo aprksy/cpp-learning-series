@@ -111,22 +111,27 @@ export function redrawMap(obj, data) {
 
 export function drawBoundary(mapObj, mapData) {
     if (mapData) {
+        let style = {
+            stroke: true,
+            // color: "#000",
+            opacity: 0.7,
+            weight: 2,
+        }
         if (mapData.areaType == "geojson") {
             clearMap(mapObj);
-            let boundary = L.geoJson(mapData.data).addTo(mapObj.map);
+            let boundary = L.geoJson(mapData.data, {style: style}).addTo(mapObj.map);
             mapObj.drawnItems.addLayer(boundary);
-            var bounds = boundary.getBounds();
-            mapObj.map.fitBounds(bounds);
             // mapData.data.features.forEach(el => {
             //     L.geoJson(el, {
             //         onEachFeature: function (feature, layer) {
             //             mapObj.drawnItems.addLayer(layer);
-            //             var bounds = layer.getBounds();
-            //             mapObj.map.fitBounds(bounds);
             //         }
             //     });
             // });
+            var bounds = boundary.getBounds();
+            mapObj.map.fitBounds(bounds);
         } else if (mapData.areaType == "circle") {
+            console.log(mapData)
             clearMap(mapObj);
             let boundary = L.circle([mapData.data.lat, mapData.data.lng], mapData.data.radius).addTo(mapObj.map);
             mapObj.drawnItems.addLayer(boundary);
@@ -155,6 +160,23 @@ export function drawTileKpi(mapObj, tileValues, tileLoc) {
 }
 
 let myIcon;
+
+export function drawSites(mapObj, data) {
+    myIcon = L.icon({
+        iconUrl: 'map-marker-icon-gray.png',
+        iconSize: [18, 30], // size of the icon
+    });
+    // data.forEach((e, i) => {
+    //     let marker = L.marker([e.lng, e.lat], {icon: myIcon});
+    //     marker.bindPopup(e.text);
+    //     mapObj.drawnItems.addLayer(marker);
+    // })
+    for (const [key, value] of Object.entries(data)) {
+        let marker = L.marker([value.lat, value.lng]);
+        marker.bindPopup(value.name);
+        mapObj.drawnItems.addLayer(marker);
+    }
+}
 
 export let markerGroup;
 function clearMarkers(obj) {

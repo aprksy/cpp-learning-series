@@ -51,9 +51,8 @@ export async function fetchBoundary(id) {
         }
     })
     let result = await res.json();
-    storeBoundaryData.set(result);
-    console.log(result)
     map.drawBoundary(map.mainMap, result);
+    storeBoundaryData.set(result);
 }
 
 export async function fetchSiteIntersects(date, region, boundaryId) {
@@ -138,5 +137,6 @@ export async function doSimulation(date, region, boundaryId, tile, gNames, gLimi
     console.log(result)
     storeSimulation.set(result);
     map.drawTileKpi(map.mainMap, result["original"]["tiles"], result["tiles"]);
+    map.drawSites(map.mainMap, result["sites"]);
 }
 

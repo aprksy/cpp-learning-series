@@ -30,6 +30,7 @@ export const storeBoundaryData = writable({});
 
 export const storeSitesInBoundary = writable([]);
 export const storeSiteIdsInBoundary = writable([]);
+export const storeSiteNamesInBoundary = writable([]);
 export const storeSiteDetails = writable([]);
 export const storeSiteCells = writable([]);
 export const storeSimulation = writable({});
