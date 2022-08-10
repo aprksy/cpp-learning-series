@@ -1,3 +1,5 @@
+import * as color from "$lib/colors";
+
 export const mainMap = {
     id: 'main-map',
     width: 664,
@@ -107,6 +109,51 @@ export function redrawMap(obj, data) {
     }
 }
 
+export function drawBoundary(mapObj, mapData) {
+    if (mapData) {
+        if (mapData.areaType == "geojson") {
+            clearMap(mapObj);
+            let boundary = L.geoJson(mapData.data).addTo(mapObj.map);
+            mapObj.drawnItems.addLayer(boundary);
+            var bounds = boundary.getBounds();
+            mapObj.map.fitBounds(bounds);
+            // mapData.data.features.forEach(el => {
+            //     L.geoJson(el, {
+            //         onEachFeature: function (feature, layer) {
+            //             mapObj.drawnItems.addLayer(layer);
+            //             var bounds = layer.getBounds();
+            //             mapObj.map.fitBounds(bounds);
+            //         }
+            //     });
+            // });
+        } else if (mapData.areaType == "circle") {
+            clearMap(mapObj);
+            let boundary = L.circle([mapData.data.lat, mapData.data.lng], mapData.data.radius).addTo(mapObj.map);
+            mapObj.drawnItems.addLayer(boundary);
+            var bounds = boundary.getBounds();
+            mapObj.map.fitBounds(bounds);
+        }
+    }
+}
+
+export function drawTileKpi(mapObj, tileValues, tileLoc) {
+    if (tileValues) {
+        for (const [key, value] of Object.entries(tileValues)) {
+            let lat = tileLoc[key].lat
+            let lng = tileLoc[key].lng
+
+            let tile = L.circle([lat, lng], {radius: 18.5}).setStyle({
+                stroke: false,
+                weight: 1, 
+                color: "#000",
+                fillOpacity: 0.6,
+                fillColor: color.byCategory(value.category1),
+            });
+            mapObj.drawnItems.addLayer(tile);
+        }
+    }
+}
+
 let myIcon;
 
 export let markerGroup;
@@ -184,9 +231,9 @@ export function setupMap(obj) {
             obj.drawnItems.addLayer(layer);
             obj.map.fitBounds(layer.getBounds());
 
-            beforeMap.map.fitBounds(layer.getBounds());
-            afterMap.map.fitBounds(layer.getBounds());
-            deltaMap.map.fitBounds(layer.getBounds());
+            // beforeMap.map.fitBounds(layer.getBounds());
+            // afterMap.map.fitBounds(layer.getBounds());
+            // deltaMap.map.fitBounds(layer.getBounds());
 
             let result;
          // sel.type = type;
