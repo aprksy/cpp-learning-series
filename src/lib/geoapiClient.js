@@ -7,6 +7,7 @@ import {
     storeSiteDetails,
     storeSiteCells,
     storeSimulation,
+    storeSiteNamesInBoundary,
 } from "$lib/store";
 import * as map from "$lib/maps";
 
@@ -95,6 +96,13 @@ export async function fetchSiteDetails(date, region, ids) {
     })
     let result = await res.json();
     console.log(result)
+    let siteNames = [{id: 0, text: 'NONE'}];
+    let i = 1;
+    for (const [key, value] of Object.entries(result)) {
+        siteNames.push({id: i, text: value['name']});
+        i++;
+    }
+    storeSiteNamesInBoundary.set(siteNames);
     storeSiteDetails.set(result);
 }
 
