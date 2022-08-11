@@ -24,6 +24,11 @@ let siteDetails = host + "/sites/details";
 let siteCells = host + "/sites/cells";
 let simulation = host + "/simulation/ui";
 
+let boundaryData;
+storeBoundaryData.subscribe(value => {
+	boundaryData = value;
+});
+
 export async function fetchBoundaries() {
     const res = await fetch(allBoundaries, {
         method: 'GET',
@@ -52,7 +57,6 @@ export async function fetchBoundary(id) {
         }
     })
     let result = await res.json();
-    map.drawBoundary(map.mainMap, result);
     storeBoundaryData.set(result);
 }
 
@@ -73,8 +77,6 @@ export async function fetchSiteIntersects(date, region, boundaryId) {
     let ids = [];
     result.forEach(e => ids.push(e.id))
     storeSiteIdsInBoundary.set(ids);
-    console.log(result)
-    console.log(ids)
     fetchSiteDetails(date, region, ids);
     fetchSiteCells(date, region, ids);
     doSimulation(date, region, boundaryId, tileField, groupNames, groupLimits,
@@ -95,12 +97,9 @@ export async function fetchSiteDetails(date, region, ids) {
         })
     })
     let result = await res.json();
-    console.log(result)
-    let siteNames = [{id: 0, text: 'NONE'}];
-    let i = 1;
+    let siteNames = [];
     for (const [key, value] of Object.entries(result)) {
-        siteNames.push({id: i, text: value['name']});
-        i++;
+        siteNames.push({id: value['site'], text: value['name']});
     }
     storeSiteNamesInBoundary.set(siteNames);
     storeSiteDetails.set(result);
@@ -120,7 +119,6 @@ export async function fetchSiteCells(date, region, ids) {
         })
     })
     let result = await res.json();
-    console.log(result)
     storeSiteCells.set(result);
 }
 
@@ -142,9 +140,15 @@ export async function doSimulation(date, region, boundaryId, tile, gNames, gLimi
         })
     })
     let result = await res.json();
-    console.log(result)
     storeSimulation.set(result);
-    map.drawTileKpi(map.mainMap, result["original"]["tiles"], result["tiles"]);
-    map.drawSites(map.mainMap, result["sites"]);
+
+    // site 'none' to be dismantled
+    map.simOptions.dismantledSite = "";
+    map.simOptions.allSites = result["sites"];
+    map.simOptions.allTiles = result["tiles"];
+    map.simOptions.boundaryData = boundaryData;
+    map.simOptions.simData = result["original"];
+
+    map.drawSimulationCategory(map.simOptions);
 }
 

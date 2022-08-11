@@ -177,18 +177,14 @@
                             placeholder="Select from registered boundary"
                             items={$storeBoundaries}
                             on:select={(e) => {
+                                maps.simOptions.mapObj = maps.mainMap;
                                 let boundaryId = e.detail.selectedItem.text;
                                 storeBoundaries_selected.set(boundaryId);
                                 client.fetchBoundary(boundaryId);
                                 client.fetchSiteIntersects("20220520", "01", boundaryId);
-                                //client.fetchSiteDetails("20220520", "01", $storeSiteIdsInBoundary);
-                                //client.fetchSiteCells("20220520", "01", $storeSiteIdsInBoundary);
-                                //storeRegionalsSelected.set(e.detail.selectedItem)
-                                //getSites()
                             }}
                             on:clear={(e) => {
-                                storeBoundaries_selected.set({});
-                                //storeSites.set([]);
+                                maps.clearMap(maps.mainMap);
                             }}
                         />
                     </div>
@@ -209,25 +205,31 @@
         <!-- Fine tune panel -->
         <div class="container col start border-right" style="width:calc(33% - 1px); height:100%;">
             <div class="container col" style="width:calc(100%); height:110px; padding: 14px;">
-                <div style="width:50%">
+                <div style="width:100%">
                     <ComboBox
                         size="sm"
                         placeholder="Select site to simulate dismantle"
                         items={$storeSiteNamesInBoundary}
                         on:select={(e) => {
-                            //storeRegionalsSelected.set(e.detail.selectedItem)
-                            // getSites()
+                            maps.simOptions.dismantledSite = e.detail.selectedId;
+                            if (e.detail.selectedId != '') {
+                                maps.simOptions.simData = $storeSimulation["simulation"][e.detail.selectedId];
+                            } else {
+                                maps.simOptions.simData = $storeSimulation["original"];
+                            }
+                            maps.drawSimulationCategory(maps.simOptions);
                         }}
                         on:clear={(e) => {
-                            //storeRegionalsSelected.set({})
-                            //storeSites.set([]);
+                            maps.simOptions.dismantledSite = '';
+                            maps.simOptions.simData = $storeSimulation["original"];
+                            maps.drawSimulationCategory(maps.simOptions);
                         }}
                     />
                 </div>
             </div>
             
             <!-- cell list panel -->
-            <div class="container row start border-bottom" style="calc(100% - 60px); height:380px; padding: 0 14px;">
+            <!--div class="container row start border-bottom" style="calc(100% - 60px); height:380px; padding: 0 14px;">
                 <div class="container col space-between" style="width:100%; overflow-y:scroll; overflow-x: hidden; background-color:#eee;">
                     <DataTable
                         selectable
@@ -272,9 +274,9 @@
                         pageInputDisabled
                     />
                 </div>
-            </div>
+            </div-->
             <!-- command panel -->
-            <div class="container row space-between" style="width:calc(100%); height:60px; align-items: center; padding: 0 14px;">
+            <!--div class="container row space-between" style="width:calc(100%); height:60px; align-items: center; padding: 0 14px;">
                 <Button size="sm" kind="tertiary">Save scenario</Button>
                 <div>
                     <Button size="sm" kind="tertiary" on:click={() => {
@@ -299,7 +301,7 @@
                         }
                     }>Redraw</Button>
                 </div>
-            </div>
+            </div-->
         </div>
     
         <!-- Result panel -->
