@@ -92,6 +92,15 @@ export const deltaMap = {
 
 let myIcon;
 
+export let simOptions = {
+    mapObj: {},
+    boundaryData: {},
+    simData: {},
+    dismantledSite: "",
+    allSites: {},
+    allTiles: {},
+}
+
 export function clearMap(obj) {
     obj.drawnItems.clearLayers();
 }
@@ -111,17 +120,18 @@ export function redrawMap(obj, data) {
     }
 }
 
-export function drawBoundary(mapObj, mapData) {
-    if (mapData) {
+export function drawBoundary(mapObj, boundaryData) {
+    if (boundaryData) {
         let style = {
             stroke: true,
             // color: "#000",
-            opacity: 0.7,
-            weight: 2,
+            opacity: 1.0,
+            weight: 3.0,
+            fillOpacity: 0.1,
+            dashArray: "10, 8",
         }
-        if (mapData.areaType == "geojson") {
-            clearMap(mapObj);
-            let boundary = L.geoJson(mapData.data, {style: style}).addTo(mapObj.map);
+        if (boundaryData.areaType == "geojson") {
+            let boundary = L.geoJson(boundaryData.data, {style: style}).addTo(mapObj.map);
             mapObj.drawnItems.addLayer(boundary);
             // mapData.data.features.forEach(el => {
             //     L.geoJson(el, {
@@ -132,10 +142,11 @@ export function drawBoundary(mapObj, mapData) {
             // });
             var bounds = boundary.getBounds();
             mapObj.map.fitBounds(bounds);
-        } else if (mapData.areaType == "circle") {
-            console.log(mapData)
-            clearMap(mapObj);
-            let boundary = L.circle([mapData.data.lat, mapData.data.lng], mapData.data.radius).addTo(mapObj.map);
+        } else if (boundaryData.areaType == "circle") {
+            console.log(boundaryData)
+            let opt = style;
+            opt["radius"] = boundaryData.data.radius
+            let boundary = L.circle([boundaryData.data.lat, boundaryData.data.lng], opt).addTo(mapObj.map);
             mapObj.drawnItems.addLayer(boundary);
             var bounds = boundary.getBounds();
             mapObj.map.fitBounds(bounds);
@@ -161,7 +172,7 @@ export function drawTileKpi(mapObj, tileValues, tileLoc) {
     }
 }
 
-export function drawSites(mapObj, data) {
+export function drawSites(mapObj, sites, dismantledSites) {
     myIcon = L.icon({
         iconUrl: 'map-marker-icon-gray.png',
         iconSize: [18, 30], // size of the icon
@@ -171,15 +182,20 @@ export function drawSites(mapObj, data) {
     //     marker.bindPopup(e.text);
     //     mapObj.drawnItems.addLayer(marker);
     // })
-    for (const [key, value] of Object.entries(data)) {
-        let marker = L.marker([value.lat, value.lng]);
-        marker.bindPopup(value.name);
-        mapObj.drawnItems.addLayer(marker);
+    for (const [key, value] of Object.entries(sites)) {
+        if (!dismantledSites.includes(key)) {
+            let marker = L.marker([value.lat, value.lng]);
+            marker.bindPopup(value.name);
+            mapObj.drawnItems.addLayer(marker);
+        }
     }
 }
 
-export function drawSimulation(mapObj, simData, site) {
-    
+export function drawSimulationCategory(simOptions) {
+    clearMap(simOptions.mapObj)
+    drawBoundary(simOptions.mapObj, simOptions.boundaryData)
+    drawTileKpi(simOptions.mapObj, simOptions.simData.tiles, simOptions.allTiles)
+    drawSites(simOptions.mapObj, simOptions.allSites, [simOptions.dismantledSite]);
 }
 
 export let markerGroup;
