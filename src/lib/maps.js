@@ -90,6 +90,8 @@ export const deltaMap = {
     map: null,
 }
 
+let myIcon;
+
 export function clearMap(obj) {
     obj.drawnItems.clearLayers();
 }
@@ -159,8 +161,6 @@ export function drawTileKpi(mapObj, tileValues, tileLoc) {
     }
 }
 
-let myIcon;
-
 export function drawSites(mapObj, data) {
     myIcon = L.icon({
         iconUrl: 'map-marker-icon-gray.png',
@@ -176,6 +176,10 @@ export function drawSites(mapObj, data) {
         marker.bindPopup(value.name);
         mapObj.drawnItems.addLayer(marker);
     }
+}
+
+export function drawSimulation(mapObj, simData, site) {
+    
 }
 
 export let markerGroup;

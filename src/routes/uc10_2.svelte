@@ -53,8 +53,6 @@
         MultiSelect,
         Link,
         Pagination,
-        TileGroup, 
-        RadioTile,
     } from "carbon-components-svelte";
     import { Upload, View, TreeView, Area, AreaCustom, WatsonHealthCircleMeasurement, ChartNetwork, Reset, CheckboxChecked, OrderDetails, Launch, Settings, Number_0, JoinRight } from "carbon-icons-svelte";
     import Drawer from 'svelte-drawer-component';
@@ -73,6 +71,7 @@
         storeSiteCells,
         storeSitesInBoundary,
         storeSiteIdsInBoundary,
+        storeSiteNamesInBoundary,
         storeSites,
         storeRegionalsSelected,
         storeNearbyCenter,
@@ -92,7 +91,7 @@
 
     let isSideNavOpen = false;
     let moduleName = "Usecase 10 - Blacksite v1.1";
-    let selectedSiteIndex = 0;
+    let selectedSite = $storeSiteNamesInBoundary[0];
     let shouldFilterItem = mainUi.shouldFilterItem;
 
     onMount(async () => {
@@ -209,14 +208,24 @@
     
         <!-- Fine tune panel -->
         <div class="container col start border-right" style="width:calc(33% - 1px); height:100%;">
-            <TileGroup
-                legend="Simulate site dismantle"
-                on:select={({ detail }) => (selected = detail)}
-            >
-                {#each values as value}
-                    <RadioTile {value} checked={selected === value}>{value}</RadioTile>
-                {/each}
-            </TileGroup>
+            <div class="container col" style="width:calc(100%); height:110px; padding: 14px;">
+                <div style="width:50%">
+                    <ComboBox
+                        size="sm"
+                        placeholder="Select site to simulate dismantle"
+                        items={$storeSiteNamesInBoundary}
+                        on:select={(e) => {
+                            //storeRegionalsSelected.set(e.detail.selectedItem)
+                            // getSites()
+                        }}
+                        on:clear={(e) => {
+                            //storeRegionalsSelected.set({})
+                            //storeSites.set([]);
+                        }}
+                    />
+                </div>
+            </div>
+            
             <!-- cell list panel -->
             <div class="container row start border-bottom" style="calc(100% - 60px); height:380px; padding: 0 14px;">
                 <div class="container col space-between" style="width:100%; overflow-y:scroll; overflow-x: hidden; background-color:#eee;">
