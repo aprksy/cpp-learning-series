@@ -82,21 +82,44 @@
         storeServingCells_selected,
         storeBoundaries_selected,
         storeSimulation,
-    } from "../../src/lib/store.js";
-    import * as mainUi from "../../src/lib/mainUi";
-    import * as maps from "../../src/lib/maps";
-    import * as colors from "../../src/lib/colors";
-    import * as chart from "../../src/lib/chartData";
-    import * as client from "../../src/lib/geoapiClient";
+    } from "../lib/controller/store.js";
+    import * as mainUi from "../lib/controller/mainUi";
+    import * as maps from "../../src/lib/view/maps";
+    import * as colors from "../../src/lib/view/colors";
+    import * as chart from "../../src/lib/view/chartData";
+    import * as client from "../../src/lib/controller/geoapiClient";
+    import Bignumber from "$lib/view/bignumber.svelte";
 
     let isSideNavOpen = false;
     let moduleName = "Usecase 10 - Blacksite v1.1";
-    let selectedSite = $storeSiteNamesInBoundary[0];
     let shouldFilterItem = mainUi.shouldFilterItem;
+    let boundaries;
+    let siteNames;
+    let drawOptions;
+    let simulationResult;
+    let siteRemovalData;
+
+    function onSimulationCompleted(data) {
+        siteNames = data.siteNames;
+        drawOptions = {
+            dismantledSite: '',
+            allSites: data.simulationResult['sites'],
+            allTiles: data.simulationResult['tiles'],
+            boundaryData: data.boundaryData,
+            simData: data.simulationResult['original'],
+        }
+        simulationResult = data.simulationResult;
+        // map.simOptions.dismantledSite = "";
+        // map.simOptions.allSites = result["sites"];
+        // map.simOptions.allTiles = result["tiles"];
+        // map.simOptions.boundaryData = boundaryData;
+        // map.simOptions.simData = result["original"];
+    }
 
     onMount(async () => {
         // get boundaries
-        client.fetchBoundaries();
+        boundaries = await client.fetchBoundaries();
+        console.log(boundaries);
 
         let mainMapTilesActual = L.layerGroup();
         let mainMapTilesSimulation = L.layerGroup();
@@ -175,13 +198,17 @@
                         <ComboBox
                             size="sm"
                             placeholder="Select from registered boundary"
-                            items={$storeBoundaries}
-                            on:select={(e) => {
-                                maps.simOptions.mapObj = maps.mainMap;
+                            items={boundaries}
+                            on:select={async (e) => {
                                 let boundaryId = e.detail.selectedItem.text;
-                                storeBoundaries_selected.set(boundaryId);
-                                client.fetchBoundary(boundaryId);
-                                client.fetchSiteIntersects("20220520", "01", boundaryId);
+                                let params = {
+                                    date: '20220520',
+                                    region: '01',
+                                    boundaryId: boundaryId,
+                                }
+                                await client.performSimulation(params, onSimulationCompleted);
+                                drawOptions.mapObj = maps.mainMap;
+                                maps.drawSimulationCategory(drawOptions);
                             }}
                             on:clear={(e) => {
                                 maps.clearMap(maps.mainMap);
@@ -205,26 +232,50 @@
         <!-- Fine tune panel -->
         <div class="container col start border-right" style="width:calc(33% - 1px); height:100%;">
             <div class="container col" style="width:calc(100%); height:110px; padding: 14px;">
-                <div style="width:100%">
+                <div style="width:100%; padding-bottom:14px;">
                     <ComboBox
                         size="sm"
                         placeholder="Select site to simulate dismantle"
-                        items={$storeSiteNamesInBoundary}
+                        items={siteNames}
                         on:select={(e) => {
-                            maps.simOptions.dismantledSite = e.detail.selectedId;
+                            drawOptions.dismantledSite = e.detail.selectedId;
                             if (e.detail.selectedId != '') {
-                                maps.simOptions.simData = $storeSimulation["simulation"][e.detail.selectedId];
+                                drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
                             } else {
-                                maps.simOptions.simData = $storeSimulation["original"];
+                                drawOptions.simData = simulationResult["original"];
                             }
-                            maps.drawSimulationCategory(maps.simOptions);
+                            maps.drawSimulationCategory(drawOptions);
                         }}
                         on:clear={(e) => {
-                            maps.simOptions.dismantledSite = '';
-                            maps.simOptions.simData = $storeSimulation["original"];
-                            maps.drawSimulationCategory(maps.simOptions);
+                            drawOptions.dismantledSite = '';
+                            drawOptions.simData = simulationResult["original"];
+                            maps.drawSimulationCategory(drawOptions);
                         }}
                     />
+                </div>
+                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:14px 0;">
+                    <Bignumber 
+                        field="tiles" 
+                        value={drawOptions ? drawOptions.simData.count : 'N/A' } 
+                        color="blue" 
+                        direction="up"
+                        arrowColor="green"
+                        width="calc((100% - 20px)/3)"/>
+                    <Bignumber 
+                        field="variable" 
+                        value="101" 
+                        color="green" 
+                        direction="none"
+                        arrowColor="green"
+                        width="calc((100% - 20px)/3)"/>
+                    <Bignumber 
+                        field="variable" 
+                        value="102" 
+                        color="red" 
+                        direction="down"
+                        arrowColor="red"
+                        rightMost 
+                        width="calc((100% - 20px)/3)"/>
                 </div>
             </div>
             

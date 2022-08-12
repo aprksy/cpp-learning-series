@@ -1,4 +1,4 @@
-import * as color from "$lib/colors";
+import * as color from "$lib/view/colors";
 
 export const mainMap = {
     id: 'main-map',
@@ -92,15 +92,6 @@ export const deltaMap = {
 
 let myIcon;
 
-export let simOptions = {
-    mapObj: {},
-    boundaryData: {},
-    simData: {},
-    dismantledSite: "",
-    allSites: {},
-    allTiles: {},
-}
-
 export function clearMap(obj) {
     obj.drawnItems.clearLayers();
 }
@@ -191,11 +182,11 @@ export function drawSites(mapObj, sites, dismantledSites) {
     }
 }
 
-export function drawSimulationCategory(simOptions) {
-    clearMap(simOptions.mapObj)
-    drawBoundary(simOptions.mapObj, simOptions.boundaryData)
-    drawTileKpi(simOptions.mapObj, simOptions.simData.tiles, simOptions.allTiles)
-    drawSites(simOptions.mapObj, simOptions.allSites, [simOptions.dismantledSite]);
+export function drawSimulationCategory(opt) {
+    clearMap(opt.mapObj)
+    drawBoundary(opt.mapObj, opt.boundaryData)
+    drawTileKpi(opt.mapObj, opt.simData.tiles, opt.allTiles)
+    drawSites(opt.mapObj, opt.allSites, [opt.dismantledSite]);
 }
 
 export let markerGroup;
