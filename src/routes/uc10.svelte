@@ -72,7 +72,7 @@
         storeNearbySites,
         storeServingCells,
         storeServingCells_selected,
-    } from "../../src/lib/store.js";
+    } from "../lib/controller/store.js";
 
     let table1PageSize = 10;
     let table1CurrentPage = 1;

@@ -55,7 +55,7 @@ Form,
     import { 
         storeRegionals, 
         storeBoundaries,
-    } from "../../src/lib/store.js";
+    } from "../lib/controller/store.js";
   
     let isSideNavOpen = false;
     let isOpen1 = false;
