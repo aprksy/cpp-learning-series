@@ -1,4 +1,4 @@
-export const storeRegionals = [
+export const regionals = [
     { id: "01", text: "REGIONAL - 01" },
     { id: "02", text: "REGIONAL - 02" },
     { id: "03", text: "REGIONAL - 03" },

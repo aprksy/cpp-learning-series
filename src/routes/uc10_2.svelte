@@ -64,25 +64,7 @@
     import "@carbon/charts/styles.min.css";
     import { onMount } from 'svelte';
     import { browser } from '$app/env';
-    import { 
-        storeRegionals, 
-        storeBoundaries,
-        storeSiteDetails,
-        storeSiteCells,
-        storeSitesInBoundary,
-        storeSiteIdsInBoundary,
-        storeSiteNamesInBoundary,
-        storeSites,
-        storeRegionalsSelected,
-        storeNearbyCenter,
-        storeNearbySitesLimit,
-        storeNearbySitesRadius,
-        storeNearbySites,
-        storeServingCells,
-        storeServingCells_selected,
-        storeBoundaries_selected,
-        storeSimulation,
-    } from "../lib/controller/store.js";
+    import * as defaults from "../lib/model/defaults";
     import * as mainUi from "../lib/controller/mainUi";
     import * as maps from "../../src/lib/view/maps";
     import * as colors from "../../src/lib/view/colors";
@@ -97,7 +79,21 @@
     let siteNames;
     let drawOptions;
     let simulationResult;
-    let siteRemovalData;
+    let simulationStat = {
+        count: {value: 'N/A', change: 'N/A'},
+        min: {value: 'N/A', change: 'N/A'},
+        max: {value: 'N/A', change: 'N/A'},
+        catExcellent: {value: 'N/A', change: 'N/A'},
+        catGood: {value: 'N/A', change: 'N/A'},
+        catFair: {value: 'N/A', change: 'N/A'},
+        catPoor: {value: 'N/A', change: 'N/A'},
+        deltaUpgraded: {value: 'N/A', change: 'N/A'},
+        deltaDegraded: {value: 'N/A', change: 'N/A'},
+        deltaUnchanged: {value: 'N/A', change: 'N/A'},
+        statusSafe: {value: 'N/A', change: 'N/A'},
+        statusUnsafe: {value: 'N/A', change: 'N/A'},
+        statusFatal: {value: 'N/A', change: 'N/A'},
+    };
 
     function onSimulationCompleted(data) {
         siteNames = data.siteNames;
@@ -116,10 +112,73 @@
         // map.simOptions.simData = result["original"];
     }
 
+    function computeStatistics(data0, data1) {
+        console.log(data1)
+        let result = {
+            'count': {
+                'value': data1.count,
+                'change': data1.count - data0.count > 0 ? 'up': data1.count - data0.count == 0 ? 'none': 'down',
+            },
+            'min': {
+                'value': data1.min,
+                'change': data1.min - data0.min > 0 ? 'up': data1.min - data0.min == 0 ? 'none': 'down',
+            },
+            'max': {
+                'value': data1.max,
+                'change': data1.max - data0.max > 0 ? 'up': data1.max - data0.max == 0 ? 'none': 'down',
+            },
+            'catExcellent': {
+                'value': data1.category.Excellent,
+                'change': data1.category.Excellent - data0.category.Excellent > 0 ? 
+                    'up': data1.category.Excellent - data0.category.Excellent == 0 ? 'none': 'down',
+            },
+            'catGood': {
+                'value': data1.category.Good,
+                'change': data1.category.Good - data0.category.Good > 0 ? 
+                    'up': data1.category.Good - data0.category.Good == 0 ? 'none': 'down',
+            },
+            'catFair': {
+                'value': data1.category.Fair,
+                'change': data1.category.Fair - data0.category.Fair > 0 ? 
+                    'up': data1.category.Fair - data0.category.Fair == 0 ? 'none': 'down',
+            },
+            'catPoor': {
+                'value': data1.category.Poor,
+                'change': data1.category.Poor - data0.category.Poor > 0 ? 
+                    'up': data1.category.Poor - data0.category.Poor == 0 ? 'none': 'down',
+            },
+            'deltaUpgraded': {
+                'value': data1.deltaSummary.UPGRADED,
+                'change': 'none',
+            },
+            'deltaUnchanged': {
+                'value': data1.deltaSummary.UNCHANGE,
+                'change': 'none',
+            },
+            'deltaDegraded': {
+                'value': data1.deltaSummary.DEGRADED,
+                'change': 'none',
+            },
+            'statusSafe': {
+                'value': data1.statusSummary.SAFE,
+                'change': 'none',
+            },
+            'statusUnsafe': {
+                'value': data1.statusSummary.UNSAFE,
+                'change': 'none',
+            },
+            'statusFatal': {
+                'value': data1.statusSummary.FATAL,
+                'change': 'none',
+            },
+        }
+        simulationStat = result;
+        return result;
+    }
+
     onMount(async () => {
         // get boundaries
         boundaries = await client.fetchBoundaries();
-        console.log(boundaries);
 
         let mainMapTilesActual = L.layerGroup();
         let mainMapTilesSimulation = L.layerGroup();
@@ -180,7 +239,7 @@
                         <ComboBox
                             size="sm"
                             placeholder="Select regional"
-                            items={$storeRegionals}
+                            items={defaults.regionals}
                             on:select={(e) => {
                                 //storeRegionalsSelected.set(e.detail.selectedItem)
                                 // getSites()
@@ -209,6 +268,8 @@
                                 await client.performSimulation(params, onSimulationCompleted);
                                 drawOptions.mapObj = maps.mainMap;
                                 maps.drawSimulationCategory(drawOptions);
+                                drawOptions.simData = simulationResult["original"];
+                                computeStatistics(simulationResult["original"], drawOptions.simData);
                             }}
                             on:clear={(e) => {
                                 maps.clearMap(maps.mainMap);
@@ -245,36 +306,105 @@
                                 drawOptions.simData = simulationResult["original"];
                             }
                             maps.drawSimulationCategory(drawOptions);
+                            computeStatistics(simulationResult["original"], drawOptions.simData);
+                            console.log(simulationStat)
                         }}
                         on:clear={(e) => {
                             drawOptions.dismantledSite = '';
                             drawOptions.simData = simulationResult["original"];
                             maps.drawSimulationCategory(drawOptions);
+                            computeStatistics(simulationResult["original"], drawOptions.simData);
                         }}
                     />
                 </div>
-                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:14px 0;">
+                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
                     <Bignumber 
                         field="tiles" 
-                        value={drawOptions ? drawOptions.simData.count : 'N/A' } 
+                        value={simulationStat.count.value} 
                         color="blue" 
-                        direction="up"
-                        arrowColor="green"
+                        direction={simulationStat.count.change}
                         width="calc((100% - 20px)/3)"/>
                     <Bignumber 
-                        field="variable" 
-                        value="101" 
+                        field="rsrp max" 
+                        value={simulationStat.max.value} 
                         color="green" 
-                        direction="none"
-                        arrowColor="green"
+                        direction={simulationStat.max.change}
                         width="calc((100% - 20px)/3)"/>
                     <Bignumber 
-                        field="variable" 
-                        value="102" 
+                        field="rsrp min" 
+                        value={simulationStat.min.value} 
                         color="red" 
-                        direction="down"
-                        arrowColor="red"
+                        direction={simulationStat.min.change}
                         rightMost 
+                        width="calc((100% - 20px)/3)"/>
+                </div>
+                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
+                    <Bignumber 
+                        field="Excellent" 
+                        value={simulationStat.catExcellent.value} 
+                        color="blue" 
+                        direction={simulationStat.catExcellent.change}
+                        width="calc((100% - 30px)/4)"/>
+                    <Bignumber 
+                        field="Good" 
+                        value={simulationStat.catGood.value} 
+                        color="green" 
+                        direction={simulationStat.catGood.change}
+                        width="calc((100% - 30px)/4)"/>
+                    <Bignumber 
+                        field="Fair" 
+                        value={simulationStat.catFair.value} 
+                        color="red" 
+                        direction={simulationStat.catFair.change}
+                        width="calc((100% - 30px)/4)"/>
+                    <Bignumber 
+                        field="Poor" 
+                        value={simulationStat.catPoor.value} 
+                        color="red" 
+                        direction={simulationStat.catPoor.change}
+                        rightMost 
+                        width="calc((100% - 30px)/4)"/>
+                </div>
+                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
+                    <Bignumber 
+                        field="upgraded" 
+                        value={simulationStat.deltaUpgraded.value} 
+                        color="blue" 
+                        direction={simulationStat.deltaUpgraded.change}
+                        width="calc((100% - 20px)/3)"/>
+                    <Bignumber 
+                        field="unchanged" 
+                        value={simulationStat.deltaUnchanged.value} 
+                        color="green" 
+                        direction={simulationStat.deltaUnchanged.change}
+                        width="calc((100% - 20px)/3)"/>
+                    <Bignumber 
+                        field="degraded" 
+                        value={simulationStat.deltaDegraded.value} 
+                        color="red" 
+                        direction={simulationStat.deltaDegraded.change}
+                        rightMost
+                        width="calc((100% - 20px)/3)"/>
+                </div>
+                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
+                    <Bignumber 
+                        field="safe" 
+                        value={simulationStat.statusSafe.value} 
+                        color="blue" 
+                        direction={simulationStat.statusSafe.change}
+                        width="calc((100% - 20px)/3)"/>
+                    <Bignumber 
+                        field="unsafe" 
+                        value={simulationStat.statusUnsafe.value} 
+                        color="green" 
+                        direction={simulationStat.statusUnsafe.change}
+                        width="calc((100% - 20px)/3)"/>
+                    <Bignumber 
+                        field="fatal" 
+                        value={simulationStat.statusFatal.value} 
+                        color="red" 
+                        direction={simulationStat.statusFatal.change}
+                        rightMost
                         width="calc((100% - 20px)/3)"/>
                 </div>
             </div>
