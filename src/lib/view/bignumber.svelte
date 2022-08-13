@@ -5,7 +5,10 @@
     export let rightMost=false;
     export let width='300px';
     export let direction='none';
-    export let arrowColor='#888';
+    export let arrowColors={
+        'up': 'green',
+        'down': 'red',
+    };
     let rightMargin = rightMost ? 0: 10;
     let up = direction == 'up' ? 'display:block': 'display:none';
     let down = direction == 'down' ? 'display:block': 'display:none';
@@ -14,8 +17,23 @@
 <div class="container" style="width:{width};margin-right:{rightMargin}px; overflow-y:auto;">
     <div class="head">
         <div class="field">{field}</div>
-        <div class="triangle-up" style="border-color: transparent transparent {arrowColor} transparent; {up}"></div>
-        <div class="triangle-down" style="border-color: {arrowColor} transparent transparent transparent; {down}"></div>
+        <div 
+            class="triangle-up" 
+            style="border-color: 
+                    transparent 
+                    transparent 
+                    {arrowColors.up} 
+                    transparent; 
+                display:{direction == 'up' ? 'block': 'none'}"
+            />
+        <div 
+            class="triangle-down" 
+            style="border-color: 
+                    {arrowColors.down} 
+                    transparent 
+                    transparent 
+                    transparent; 
+                display:{direction == 'down' ? 'block': 'none'}"/>
     </div>
     <p class="value" style="color:{color};">{value}</p>
 </div>
