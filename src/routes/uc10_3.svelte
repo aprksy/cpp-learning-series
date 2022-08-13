@@ -105,11 +105,6 @@
             simData: data.simulationResult['original'],
         }
         simulationResult = data.simulationResult;
-        // map.simOptions.dismantledSite = "";
-        // map.simOptions.allSites = result["sites"];
-        // map.simOptions.allTiles = result["tiles"];
-        // map.simOptions.boundaryData = boundaryData;
-        // map.simOptions.simData = result["original"];
     }
 
     function computeStatistics(data0, data1) {
@@ -221,12 +216,12 @@
         </HeaderAction> -->
     </HeaderUtilities>
 </Header>
-<div class="container col start" style="width:100vw; height:calc(100vh - 50px); margin-top:50px;">
+<div class="container col start" style="width:100vw; height:calc(100vh - 50px); margin-top:50px; background-color:#fafafa;">
     <!-- Toolbar and other non workflow functions -->
     <div class="control row border-bottom" style="width:100%; height:60px"></div>
-    <div class="container row start" style="width:100vw; height:100%;">
+    <div class="container row start" style="width:100vw; height:100%; background-color:transparent;">
         <!-- Requirement panel -->
-        <div class="container col start border-right" style="width:calc(33% - 1px); height:100%;">
+        <div class="container col start border-right" style="width:calc(33% - 1px); height:100%; background-color:#fff;">
             <div class="container col" style="width:calc(100%); height:110px; padding: 14px;">
                 <!-- date & regional panel -->
                 <div class="container row space-between" style="width:calc(100%); height:40px;">
@@ -291,202 +286,135 @@
         </div>
     
         <!-- Fine tune panel -->
-        <div class="container col start border-right" style="width:calc(33% - 1px); height:100%;">
-            <div class="container col" style="width:calc(100%); height:110px; padding: 14px;">
-                <div style="width:100%; padding-bottom:14px;">
-                    <ComboBox
-                        size="sm"
-                        placeholder="Select site to simulate dismantle"
-                        items={siteNames}
-                        on:select={(e) => {
-                            drawOptions.dismantledSite = e.detail.selectedId;
-                            if (e.detail.selectedId != '') {
-                                drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
-                            } else {
+        <div class="container col start" style="width:calc(67% - 12px); height:100%; background-color:#fafafa;">
+            <div class="container col" style="width:calc(100%); height:100%; padding: 14px;">
+                <div class="container row start" style="width:100%;">
+                    <div style="width:25%; padding-bottom:14px;">
+                        <ComboBox
+                            size="sm"
+                            placeholder="Select site to simulate dismantle"
+                            items={siteNames}
+                            on:select={(e) => {
+                                drawOptions.dismantledSite = e.detail.selectedId;
+                                if (e.detail.selectedId != '') {
+                                    drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
+                                } else {
+                                    drawOptions.simData = simulationResult["original"];
+                                }
+                                maps.drawSimulationCategory(drawOptions);
+                                computeStatistics(simulationResult["original"], drawOptions.simData);
+                                console.log(simulationStat)
+                            }}
+                            on:clear={(e) => {
+                                drawOptions.dismantledSite = '';
                                 drawOptions.simData = simulationResult["original"];
-                            }
-                            maps.drawSimulationCategory(drawOptions);
-                            computeStatistics(simulationResult["original"], drawOptions.simData);
-                            console.log(simulationStat)
-                        }}
-                        on:clear={(e) => {
-                            drawOptions.dismantledSite = '';
-                            drawOptions.simData = simulationResult["original"];
-                            maps.drawSimulationCategory(drawOptions);
-                            computeStatistics(simulationResult["original"], drawOptions.simData);
-                        }}
-                    />
+                                maps.drawSimulationCategory(drawOptions);
+                                computeStatistics(simulationResult["original"], drawOptions.simData);
+                            }}
+                        />
+                    </div>
                 </div>
-                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
-                    <Bignumber 
-                        field="tiles" 
-                        value={simulationStat.count.value} 
-                        color="blue" 
-                        direction={simulationStat.count.change}
-                        width="calc((100% - 20px)/3)"/>
-                    <Bignumber 
-                        field="rsrp max" 
-                        value={simulationStat.max.value} 
-                        color="green" 
-                        direction={simulationStat.max.change}
-                        width="calc((100% - 20px)/3)"/>
-                    <Bignumber 
-                        field="rsrp min" 
-                        value={simulationStat.min.value} 
-                        color="red" 
-                        direction={simulationStat.min.change}
-                        rightMost 
-                        width="calc((100% - 20px)/3)"/>
-                </div>
-                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
-                    <Bignumber 
-                        field="Excellent" 
-                        value={simulationStat.catExcellent.value} 
-                        color="blue" 
-                        direction={simulationStat.catExcellent.change}
-                        width="calc((100% - 30px)/4)"/>
-                    <Bignumber 
-                        field="Good" 
-                        value={simulationStat.catGood.value} 
-                        color="green" 
-                        direction={simulationStat.catGood.change}
-                        width="calc((100% - 30px)/4)"/>
-                    <Bignumber 
-                        field="Fair" 
-                        value={simulationStat.catFair.value} 
-                        color="red" 
-                        direction={simulationStat.catFair.change}
-                        width="calc((100% - 30px)/4)"/>
-                    <Bignumber 
-                        field="Poor" 
-                        value={simulationStat.catPoor.value} 
-                        color="red" 
-                        direction={simulationStat.catPoor.change}
-                        rightMost 
-                        width="calc((100% - 30px)/4)"/>
-                </div>
-                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
-                    <Bignumber 
-                        field="upgraded" 
-                        value={simulationStat.deltaUpgraded.value} 
-                        color="blue" 
-                        direction={simulationStat.deltaUpgraded.change}
-                        width="calc((100% - 20px)/3)"/>
-                    <Bignumber 
-                        field="unchanged" 
-                        value={simulationStat.deltaUnchanged.value} 
-                        color="green" 
-                        direction={simulationStat.deltaUnchanged.change}
-                        width="calc((100% - 20px)/3)"/>
-                    <Bignumber 
-                        field="degraded" 
-                        value={simulationStat.deltaDegraded.value} 
-                        color="red" 
-                        direction={simulationStat.deltaDegraded.change}
-                        rightMost
-                        width="calc((100% - 20px)/3)"/>
-                </div>
-                <div style="display:flex; flex-flow:row nowrap; width:100%; padding:5px 0;">
-                    <Bignumber 
-                        field="safe" 
-                        value={simulationStat.statusSafe.value} 
-                        color="blue" 
-                        direction={simulationStat.statusSafe.change}
-                        width="calc((100% - 20px)/3)"/>
-                    <Bignumber 
-                        field="unsafe" 
-                        value={simulationStat.statusUnsafe.value} 
-                        color="green" 
-                        direction={simulationStat.statusUnsafe.change}
-                        width="calc((100% - 20px)/3)"/>
-                    <Bignumber 
-                        field="fatal" 
-                        value={simulationStat.statusFatal.value} 
-                        color="red" 
-                        direction={simulationStat.statusFatal.change}
-                        rightMost
-                        width="calc((100% - 20px)/3)"/>
+                <div class="container col start" style="width:100%; height:calc(100% - 60px);">
+                    <div style="display:flex; flex-flow:row nowrap; width:100%;">
+                        <Bignumber 
+                            field="tiles" 
+                            value={simulationStat.count.value} 
+                            color="gray" 
+                            direction={simulationStat.count.change}
+                            width="calc((100% - 40px)/5)"/>
+                        <Bignumber 
+                            field="Excellent" 
+                            value={simulationStat.catExcellent.value} 
+                            color="gray" 
+                            direction={simulationStat.catExcellent.change}
+                            width="calc((100% - 40px)/5)"/>
+                        <Bignumber 
+                            field="Good" 
+                            value={simulationStat.catGood.value} 
+                            color="gray" 
+                            direction={simulationStat.catGood.change}
+                            width="calc((100% - 40px)/5)"/>
+                        <Bignumber 
+                            field="Fair" 
+                            value={simulationStat.catFair.value} 
+                            color="gray" 
+                            direction={simulationStat.catFair.change}
+                            width="calc((100% - 40px)/5)"/>
+                        <Bignumber 
+                            field="Poor" 
+                            value={simulationStat.catPoor.value} 
+                            color="gray" 
+                            direction={simulationStat.catPoor.change}
+                            rightMost 
+                            width="calc((100% - 40px)/5)"/>
+                    </div>
+
+                    <div class="container row start" style="width:100%; height:420px; background-color:#fff; margin:12px 0; border:1px solid #eee;">
+
+                    </div>
+
+                    <div class="container row start" style="width:100%; height:300px;">
+                        <div class="container row start" style="width:calc(50% - 6px); height:282px; margin-right:12px">
+                            <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
+                                <Bignumber 
+                                    field="upgraded" 
+                                    value={simulationStat.deltaUpgraded.value} 
+                                    color="gray" 
+                                    direction={simulationStat.deltaUpgraded.change}
+                                    width="200px"/>
+                                <div style="height:12px"/>
+                                <Bignumber 
+                                    field="unchanged" 
+                                    value={simulationStat.deltaUnchanged.value} 
+                                    color="gray" 
+                                    direction={simulationStat.deltaUnchanged.change}
+                                    width="200px"/>
+                                <div style="height:12px"/>
+                                <Bignumber 
+                                    field="degraded" 
+                                    value={simulationStat.deltaDegraded.value} 
+                                    color="gray" 
+                                    direction={simulationStat.deltaDegraded.change}
+                                    width="200px"/>
+                            </div>
+                            <div style="width:calc(100% - 212px); padding:5px 0; background-color:#fff; border:1px solid #eee;">
+                            </div>
+                        </div>
+                        <div class="container row start" style="width:calc(50% - 6px); height:282px;">
+                            <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
+                                <Bignumber 
+                                    field="safe" 
+                                    value={simulationStat.statusSafe.value} 
+                                    color="gray" 
+                                    direction={simulationStat.statusSafe.change}
+                                    width="200px"/>
+                                <div style="height:12px"/>
+                                <Bignumber 
+                                    field="unsafe" 
+                                    value={simulationStat.statusUnsafe.value} 
+                                    color="gray" 
+                                    direction={simulationStat.statusUnsafe.change}
+                                    width="200px"/>
+                                <div style="height:12px"/>
+                                <Bignumber 
+                                    field="fatal" 
+                                    value={simulationStat.statusFatal.value} 
+                                    color="gray" 
+                                    direction={simulationStat.statusFatal.change}
+                                    width="200px"/>
+                            </div>
+                            <div style="width:calc(100% - 212px); padding:5px 0; background-color:#fff; border:1px solid #eee;">
+                            </div>
+                        </div>
+                    </div>
+
+
                 </div>
             </div>
-            
-            <!-- cell list panel -->
-            <!--div class="container row start border-bottom" style="calc(100% - 60px); height:380px; padding: 0 14px;">
-                <div class="container col space-between" style="width:100%; overflow-y:scroll; overflow-x: hidden; background-color:#eee;">
-                    <DataTable
-                        selectable
-                        sortable
-                        size="medium"
-                        headers={[
-                            { key: "name", value: "Cell name", minWidth: "120px" },
-                            { key: "tileCount", value: "Tiles", width: "60px" },
-                            { key: "avgRsrp", value: "Avg. RSRP", width: "80px" },
-                        ]}
-                        rows={$storeServingCells}
-                        bind:selectedRowIds={$storeServingCells_selected}
-                        bind:pageSize={mainUi.table2PageSize}
-                        bind:page={mainUi.table2CurrentPage}
-                    >
-                        <svelte:fragment slot="header" let:header>
-                            {#if header.key === "avgRsrp" || header.key === "eventCount" || header.key === "tileCount" }
-                                <div style="width:100%; text-align:right;">{header.value}</div>
-                            {:else}
-                                {header.value}
-                            {/if}
-                        </svelte:fragment>
-                        <svelte:fragment slot="cell" let:row let:cell>
-                            {#if cell.key === "avgRsrp" || cell.key === "eventCount" || cell.key === "tileCount" }
-                                <div style="width:100%; padding:5px 0; text-align:right;">{cell.value}</div>
-                            {:else}
-                                <div style="width:200px; padding:5px 0; white-space: nowrap; text-overflow:clip;">{cell.value}</div>
-                            {/if}
-                        </svelte:fragment>
-                    </DataTable>
-                    {#if $storeServingCells.length == 0}
-                        <div style="width:100%; text-align:center;">
-                            <div style="font-weight:500;">No data</div>
-                            <div>complete fields on the left panel,<br>and select an area on the map</div>
-                        </div>
-                    {/if}
-                    <Pagination
-                        bind:pageSize={mainUi.table2PageSize}
-                        bind:page={mainUi.table2CurrentPage}
-                        totalItems={$storeServingCells.length}
-                        pageSizes={[10,15,20,50]}
-                        pageInputDisabled
-                    />
-                </div>
-            </div-->
-            <!-- command panel -->
-            <!--div class="container row space-between" style="width:calc(100%); height:60px; align-items: center; padding: 0 14px;">
-                <Button size="sm" kind="tertiary">Save scenario</Button>
-                <div>
-                    <Button size="sm" kind="tertiary" on:click={() => {
-                            // storeServingCells_selected.set([]);
-                            // simulationTiles = drawSimulatedTiles([mainMap, afterMap], resultSet, $storeServingCells_selected)
-                            // drawDeltaTiles([mainMap, deltaMap], actualTiles, simulationTiles)
-                            // donutSimulation = [];
-                            // donutSimDelta = [];
-                            // barGroupActualVsSimulation = [];
-                        }
-                    }>Reset</Button>
-                    <Button size="sm" kind="primary" on:click={() => {
-                            // simulationTiles = drawSimulatedTiles([mainMap, afterMap], resultSet, $storeServingCells_selected)
-                            // donutSimulation = getDonutChartData(simulationTiles, "category", categoryNames)
-                            // let deltaTiles = drawDeltaTiles([mainMap, deltaMap], actualTiles, simulationTiles)
-                            // donutSimDelta = getDonutChartData(deltaTiles, "status", statusNames)
-                            // barGroupActualVsSimulation = getBarGroupChartData([actualTiles, simulationTiles], "category", 
-                            //     categoryNames, ["Actual", "Simulation"])
-                            // tableTilesDelta = getTableData(deltaTiles, ["tileId", "avgRSRP0", "avgRSRP1", "statusText"],
-                            //     (row) => {return row["status"] < 1})
-                            // console.log(tableTilesDelta)
-                        }
-                    }>Redraw</Button>
-                </div>
-            </div-->
         </div>
     
         <!-- Result panel -->
-        <div class="container col start" style="width:calc(34%); height:100%;">
+        <!--div class="container col start" style="width:calc(34%); height:100%;">
             <div class="container row" style="width:calc(100%); height:282px; align-items: center; padding: 14px;">
                 <div style="margin-top:0px; width:220px;">
                     <DonutChart 
@@ -547,7 +475,6 @@
                     />
                 </div>
             </div>
-            <!-- tile list panel -->
             <div class="container row start border-bottom" style="calc(100%); height:506px; padding: 0 14px;">
                 <div class="container col space-between" style="width:100%; background-color:#eee; overflow-y:scroll; overflow-x:hidden;">
                     <DataTable
@@ -606,14 +533,13 @@
                     />
                 </div>
             </div>
-            <!-- command panel -->
             <div class="container row space-between" style="width:calc(100%); height:60px; align-items: center; padding: 0 14px;">
                 <div></div>
                 <div>
                     <Button size="sm" kind="primary" on:click={() => SubpageDetailAnalysis = true}>Show details</Button>
                 </div>
             </div>
-        </div>
+        </div-->
     </div>
 </div>
 

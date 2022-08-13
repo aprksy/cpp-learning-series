@@ -75,7 +75,7 @@
         storeNearbySites,
         storeServingCells,
         storeServingCells_selected,
-    } from "../../src/lib/store.js";
+    } from "../lib/controller/store.js";
     
     import Index from "./index.svelte";
 
