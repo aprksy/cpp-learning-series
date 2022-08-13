@@ -126,7 +126,7 @@
                 <div class="box-subtitle">Data sources</div>
                 <div class="box-content">Cell events, sitedb, all-regions</div>
                 <div class="box-control container row end">
-                    <Button size="field" icon={ArrowRight} on:click={()=>{window.open("/uc10_2");}}>OPEN</Button>
+                    <Button size="field" icon={ArrowRight} on:click={()=>{window.open("/uc10_3");}}>OPEN</Button>
                 </div>
             </div>
         </div>

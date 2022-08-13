@@ -3,7 +3,7 @@
     export let value=0;
     export let color='#888';
     export let rightMost=false;
-    export let width='300px';
+    export let width='200px';
     export let direction='none';
     export let arrowColors={
         'up': 'green',
@@ -41,14 +41,14 @@
 <style>
     .container {
         display: flex;
-        flex-flow: column wrap;
-        padding: 5px 10px;
+        flex-flow: column nowrap;
+        padding: 5px;
         border: 1px solid #eee;
+        background-color: #fff;
     }
     .head {
         display: flex;
-        flex-flow: row wrap;
-        padding: 5px 0;
+        flex-flow: row nowrap;
         justify-content: space-between;
         width: 100%;
     }
@@ -60,7 +60,6 @@
     }
     .value {
         width: 100%;
-        margin-top: 10px;
         font-size: 40px;
         text-align: right;
         align-self: flex-end;
