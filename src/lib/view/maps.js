@@ -134,7 +134,6 @@ export function drawBoundary(mapObj, boundaryData) {
             var bounds = boundary.getBounds();
             mapObj.map.fitBounds(bounds);
         } else if (boundaryData.areaType == "circle") {
-            console.log(boundaryData)
             let opt = style;
             opt["radius"] = boundaryData.data.radius
             let boundary = L.circle([boundaryData.data.lat, boundaryData.data.lng], opt).addTo(mapObj.map);
