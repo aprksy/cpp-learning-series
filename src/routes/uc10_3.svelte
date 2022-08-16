@@ -76,6 +76,7 @@
     let moduleName = "Usecase 10 - Blacksite v1.1";
     let shouldFilterItem = mainUi.shouldFilterItem;
     let boundaries;
+    let mapPage=1;
     let siteNames;
     let drawOptions;
     let simulationResult;
@@ -258,10 +259,11 @@
             // setupMap(addMap);
             // setupMap(editMap);
             // setupMap(deleteMap);
-            // maps.setupMap(maps.beforeMap);
-            // maps.setupMap(maps.afterMap);
+            maps.setupMap(maps.beforeMap);
+            maps.setupMap(maps.afterMap);
             // maps.setupMap(maps.deltaMap);
         }
+        mapPage=0;
     });
 </script>
   
@@ -364,421 +366,307 @@
         </div>
     
         <!-- Fine tune panel -->
-        <div class="container col start" style="width:calc(67% - 12px); height:100%; background-color:#fafafa;">
-            <div class="container col" style="width:calc(100%); height:100%; padding: 14px;">
-                <div class="container row start" style="width:100%;">
-                    <div style="width:25%; padding-bottom:14px;">
-                        <ComboBox
-                            size="sm"
-                            placeholder="Select site to simulate dismantle"
-                            items={siteNames}
-                            on:select={(e) => {
-                                drawOptions.dismantledSite = e.detail.selectedId;
-                                if (e.detail.selectedId != '') {
-                                    drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
-                                } else {
-                                    drawOptions.simData = simulationResult["original"];
-                                }
-                                maps.drawSimulationCategory(drawOptions);
-                                computeStatistics(simulationResult["original"], drawOptions.simData);
-                                setupChartsData(simulationResult["original"], drawOptions.simData);
-                            }}
-                            on:clear={(e) => {
-                                drawOptions.dismantledSite = '';
-                                drawOptions.simData = simulationResult["original"];
-                                maps.drawSimulationCategory(drawOptions);
-                                computeStatistics(simulationResult["original"], drawOptions.simData);
-                                setupChartsData(simulationResult["original"], drawOptions.simData);
-                            }}
-                        />
-                    </div>
-                </div>
-                <div class="container col start" style="width:100%; height:calc(100% - 60px);">
-                    <div style="display:flex; flex-flow:row nowrap; width:100%;">
-                        <Bignumber 
-                            field="tiles" 
-                            value={simulationStat.count.value} 
-                            color="gray" 
-                            direction={simulationStat.count.change}
-                            width="calc((100% - 40px)/5)"/>
-                        <Bignumber 
-                            field="Excellent" 
-                            value={simulationStat.catExcellent.value} 
-                            color={colors.byCategory("Excellent")} 
-                            direction={simulationStat.catExcellent.change}
-                            width="calc((100% - 40px)/5)"/>
-                        <Bignumber 
-                            field="Good" 
-                            value={simulationStat.catGood.value} 
-                            color={colors.byCategory("Good")} 
-                            direction={simulationStat.catGood.change}
-                            width="calc((100% - 40px)/5)"/>
-                        <Bignumber 
-                            field="Fair" 
-                            value={simulationStat.catFair.value} 
-                            color={colors.byCategory("Fair")} 
-                            direction={simulationStat.catFair.change}
-                            width="calc((100% - 40px)/5)"/>
-                        <Bignumber 
-                            field="Poor" 
-                            value={simulationStat.catPoor.value} 
-                            color={colors.byCategory("Poor")} 
-                            direction={simulationStat.catPoor.change}
-                            rightMost 
-                            width="calc((100% - 40px)/5)"/>
-                    </div>
-
-                    <div class="container row start" style="width:100%; height:420px; background-color:#fff; margin:12px 0; border:1px solid #eee;">
-                        <div class="container col start" style="width:400px; padding:12px;">
-                            <DonutChart 
-                                data={chartsData.donut.tilesKpi}
-                                options={{
-                                    "data": {
-                                    },
-                                    "resizable": true,
-                                    "donut": {
-                                        "center": {
-                                            "label": "Tiles"
-                                        },
-                                        "alignment": "center",
-                                    },
-                                    "legend": {
-                                        "alignment": "center",
-                                    },
-                                    "color": {
-                                        "scale": {
-                                            "Excellent": colors.c1,
-                                            "Good": colors.c2,
-                                            "Fair": colors.c3,
-                                            "Poor": colors.c4
-                                        }
-                                    },
-                                    "toolbar":{
-                                        "enabled": false,
-                                    },
-                                    "height": "375px",
-                                    "data": {
-                                        "loading": chartsData.donut.tilesKpi.length == 0,
-                                    },
-                                }}
-                            />
-                        </div>
-                        <div class="container col start" style="width:300px; padding:12px;">
-                            <BarChartGrouped
-                                data={chartsData.barGroup.compareKpi}
-                                    options={{
-                                        "axes": {
-                                            "bottom": {
-                                                "mapsTo": "value"
-                                            },
-                                            "left": {
-                                                "scaleType": "labels",
-                                                "mapsTo": "key"
+        <div class="container col start" style="width:calc(67% - 12px); height:100%; background-color:#fafafa; overflow-y:clip;">
+            <Tabs selected={mapPage}>
+                <Tab label="Dashboard" />
+                <Tab label="Multimap" />
+                <Tab label="Tables" />
+                <svelte:fragment slot="content">
+                    <TabContent>
+                        <div class="container col" style="width:calc(100%); height:100%; padding: 14px;">
+                            <div class="container row start" style="width:100%;">
+                                <div style="width:25%; padding-bottom:14px;">
+                                    <ComboBox
+                                        size="sm"
+                                        placeholder="Select site to simulate dismantle"
+                                        items={siteNames}
+                                        on:select={(e) => {
+                                            drawOptions.dismantledSite = e.detail.selectedId;
+                                            if (e.detail.selectedId != '') {
+                                                drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
+                                            } else {
+                                                drawOptions.simData = simulationResult["original"];
                                             }
-                                        },
-                                        "bars": {
-                                            "width": 40,
-                                        },
-                                        "height": "375px",
-                                        "color": {
-                                            "scale": {
-                                                "Before": colors.c1,
-                                                "After": colors.c2,
-                                            }
-                                        },
-                                        "toolbar":{
-                                            "enabled": false,
-                                        },
-                                        "data": {
-                                            "loading": chartsData.barGroup.compareKpi == 0,
-                                        },
-                                    }}
-                                />
-                        </div>
-                        <div class="container col start" style="width:calc(100% - 700px); border-right:1px solid #eee; padding:12px;">
-                            <BarChartSimple
-                                data={chartsData.bar.distributionSimulation}
-                                    options={{
-                                        "axes": {
-                                            "left": {
-                                                "mapsTo": "value"
-                                            },
-                                            "bottom": {
-                                                "scaleType": "linear",
-                                                "mapsTo": "group",
-                                                "includeZero": false,
-                                            }
-                                        },
-                                        "bars": {
-                                            "width": 6,
-                                        },
-                                        "legend": {
-                                            "enabled": false,
-                                        },
-                                        "height": "375px",
-                                        "getFillColor": function(group) {
-                                            return colors.fromValue(group);
-                                        },
-                                        "toolbar":{
-                                            "enabled": false,
-                                        },
-                                        "data": {
-                                            "loading": chartsData.bar.distributionSimulation == 0,
-                                        },
-                                    }}
-                                />
-                        </div>
-                    </div>
-
-                    <div class="container row start" style="width:100%; height:300px;">
-                        <div class="container row start" style="width:calc(50% - 6px); height:282px; margin-right:12px">
-                            <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
-                                <Bignumber 
-                                    field="upgraded" 
-                                    value={simulationStat.deltaUpgraded.value} 
-                                    color={colors.byDelta('Upgrade')}
-                                    direction={simulationStat.deltaUpgraded.change}
-                                    width="200px"/>
-                                <div style="height:12px"/>
-                                <Bignumber 
-                                    field="unchanged" 
-                                    value={simulationStat.deltaUnchanged.value} 
-                                    color={colors.byDelta('Unchange')}
-                                    direction={simulationStat.deltaUnchanged.change}
-                                    width="200px"/>
-                                <div style="height:12px"/>
-                                <Bignumber 
-                                    field="degraded" 
-                                    value={simulationStat.deltaDegraded.value} 
-                                    color={colors.byDelta('Degrade')}
-                                    direction={simulationStat.deltaDegraded.change}
-                                    width="200px"/>
-                            </div>
-                            <div style="width:calc(100% - 212px); padding:5px 0; background-color:#fff; border:1px solid #eee;">
-                                <DonutChart 
-                                    data={chartsData.donut.delta}
-                                    options={{
-                                        "data": {
-                                        },
-                                        "resizable": true,
-                                        "donut": {
-                                            "center": {
-                                                "label": "Tiles"
-                                            },
-                                            "alignment": "center",
-                                        },
-                                        "legend": {
-                                            "alignment": "center",
-                                        },
-                                        "color": {
-                                            "scale": {
-                                                "Upgrade": colors.c2,
-                                                "Unchange": colors.c3,
-                                                "Degrade": colors.c4,
-                                            }
-                                        },
-                                        "toolbar":{
-                                            "enabled": false,
-                                        },
-                                        "height": "250px",
-                                        "data": {
-                                            "loading": chartsData.donut.delta.length == 0,
-                                        },
-                                    }}
-                                />
-                            </div>
-                        </div>
-                        <div class="container row start" style="width:calc(50% - 6px); height:282px;">
-                            <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
-                                <Bignumber 
-                                    field="safe" 
-                                    value={simulationStat.statusSafe.value} 
-                                    color={colors.byStatus('Safe')}
-                                    direction={simulationStat.statusSafe.change}
-                                    width="200px"/>
-                                <div style="height:12px"/>
-                                <Bignumber 
-                                    field="unsafe" 
-                                    value={simulationStat.statusUnsafe.value} 
-                                    color={colors.byStatus('Unsafe')}
-                                    direction={simulationStat.statusUnsafe.change}
-                                    width="200px"/>
-                                <div style="height:12px"/>
-                                <Bignumber 
-                                    field="fatal" 
-                                    value={simulationStat.statusFatal.value} 
-                                    color={colors.byStatus('Fatal')}
-                                    direction={simulationStat.statusFatal.change}
-                                    width="200px"/>
-                            </div>
-                            <div style="width:calc(100% - 212px); padding:5px 0; background-color:#fff; border:1px solid #eee;">
-                                <DonutChart 
-                                    data={chartsData.donut.status}
-                                    options={{
-                                        "data": {
-                                        },
-                                        "resizable": true,
-                                        "donut": {
-                                            "center": {
-                                                "label": "Tiles"
-                                            },
-                                            "alignment": "center",
-                                        },
-                                        "legend": {
-                                            "alignment": "center",
-                                        },
-                                        "color": {
-                                            "scale": {
-                                                "Safe": colors.c2,
-                                                "Unsafe": colors.c4,
-                                                "Fatal": "black",
-                                            }
-                                        },
-                                        "toolbar":{
-                                            "enabled": false,
-                                        },
-                                        "height": "250px",
-                                        "data": {
-                                            "loading": chartsData.donut.status.length == 0,
-                                        },
-                                    }}
-                                />
-                            </div>
-                        </div>
-                    </div>
-
-
-                </div>
-            </div>
-        </div>
-    
-        <!-- Result panel -->
-        <!--div class="container col start" style="width:calc(34%); height:100%;">
-            <div class="container row" style="width:calc(100%); height:282px; align-items: center; padding: 14px;">
-                <div style="margin-top:0px; width:220px;">
-                    <DonutChart 
-                        data={chart.donutSimDelta}
-                        options={{
-                            "data": {
-                            },
-                            "resizable": true,
-                            "donut": {
-                                "center": {
-                                    "label": "Tiles"
-                                },
-                            },
-                            "color": {
-                                "scale": {
-                                    "Unchanged": colors.c3,
-                                    "Safe": colors.c2,
-                                    "Unsafe": colors.c4
-                                }
-                            },
-                            "toolbar":{
-                                "enabled": false,
-                            },
-                            "height": "200px",
-                            "data": {
-                                "loading": chart.donutSimDelta.length == 0,
-                            },
-                        }}
-                    />
-                </div>
-                <div style="margin-top:0px; width:400px;">
-                    <BarChartGrouped
-                    data={chart.barGroupActualVsSimulation}
-                        options={{
-                            "axes": {
-                                "left": {
-                                    "mapsTo": "value"
-                                },
-                                "bottom": {
-                                    "scaleType": "labels",
-                                    "mapsTo": "key"
-                                }
-                            },
-                            "height": "200px",
-                            "color": {
-                                "scale": {
-                                    "Actual": colors.c1,
-                                    "Simulation": colors.c2,
-                                }
-                            },
-                            "toolbar":{
-                                "enabled": false,
-                            },
-                            "data": {
-                                "loading": chart.barGroupActualVsSimulation.length == 0,
-                            },
-                        }}
-                    />
-                </div>
-            </div>
-            <div class="container row start border-bottom" style="calc(100%); height:506px; padding: 0 14px;">
-                <div class="container col space-between" style="width:100%; background-color:#eee; overflow-y:scroll; overflow-x:hidden;">
-                    <DataTable
-                        sortable
-                        filterable
-                        size="medium"
-                        headers={[
-                            { key: "tileId", value: "Tile Id", width: "80px"},
-                            { key: "avgRSRP0", value: "RSRP Before", width: "80px"},
-                            { key: "avgRSRP1", value: "RSRP After", width: "80px"},
-                            { key: "statusText", value: "Status", width: "80px"},
-                        ]}
-                        rows={chart.tableTilesDelta}
-                        bind:pageSize={mainUi.table3PageSize}
-                        bind:page={mainUi.table3CurrentPage}
-                    >
-                        <svelte:fragment slot="header" let:header>
-                            {#if header.key === "before" || header.key === "after" || header.key === "delta" }
-                                <div style="width:100%; text-align:right;">{header.value}</div>
-                            {:else}
-                                {header.value}
-                            {/if}
-                        </svelte:fragment>
-                        <svelte:fragment slot="cell" let:row let:cell>
-                            {#if cell.key === "avgRSRP0" || cell.key === "avgRSRP1" }
-                                <div style="width:100%; text-align:right; padding:5px; background-color:{getColorByCategory(getCategoryByValue(cell.value))}">
-                                    {cell.value}
+                                            maps.drawSimulationCategory(drawOptions);
+                                            computeStatistics(simulationResult["original"], drawOptions.simData);
+                                            setupChartsData(simulationResult["original"], drawOptions.simData);
+                                        }}
+                                        on:clear={(e) => {
+                                            drawOptions.dismantledSite = '';
+                                            drawOptions.simData = simulationResult["original"];
+                                            maps.drawSimulationCategory(drawOptions);
+                                            computeStatistics(simulationResult["original"], drawOptions.simData);
+                                            setupChartsData(simulationResult["original"], drawOptions.simData);
+                                        }}
+                                    />
                                 </div>
-                            {:else if cell.key === "statusText"}
-                                {#if cell.value === "Unsafe"}
-                                    <div style="width:100%; padding:5px; text-align:center; text-transform:uppercase; background-color:{colors.c4}">
-                                        {cell.value}
+                            </div>
+                            <div class="container col start" style="width:100%; height:calc(100% - 60px);">
+                                <div style="display:flex; flex-flow:row nowrap; width:100%;">
+                                    <Bignumber 
+                                        field="tiles" 
+                                        value={simulationStat.count.value} 
+                                        color="gray" 
+                                        direction={simulationStat.count.change}
+                                        width="calc((100% - 40px)/5)"/>
+                                    <Bignumber 
+                                        field="Excellent" 
+                                        value={simulationStat.catExcellent.value} 
+                                        color={colors.byCategory("Excellent")} 
+                                        direction={simulationStat.catExcellent.change}
+                                        width="calc((100% - 40px)/5)"/>
+                                    <Bignumber 
+                                        field="Good" 
+                                        value={simulationStat.catGood.value} 
+                                        color={colors.byCategory("Good")} 
+                                        direction={simulationStat.catGood.change}
+                                        width="calc((100% - 40px)/5)"/>
+                                    <Bignumber 
+                                        field="Fair" 
+                                        value={simulationStat.catFair.value} 
+                                        color={colors.byCategory("Fair")} 
+                                        direction={simulationStat.catFair.change}
+                                        width="calc((100% - 40px)/5)"/>
+                                    <Bignumber 
+                                        field="Poor" 
+                                        value={simulationStat.catPoor.value} 
+                                        color={colors.byCategory("Poor")} 
+                                        direction={simulationStat.catPoor.change}
+                                        rightMost 
+                                        width="calc((100% - 40px)/5)"/>
+                                </div>
+            
+                                <div class="container row start" style="width:100%; height:380px; background-color:#fff; margin:12px 0; border:1px solid #eee;">
+                                    <div class="container col start" style="width:400px; padding:12px;">
+                                        <DonutChart 
+                                            data={chartsData.donut.tilesKpi}
+                                            options={{
+                                                "data": {
+                                                },
+                                                "resizable": true,
+                                                "donut": {
+                                                    "center": {
+                                                        "label": "Tiles"
+                                                    },
+                                                    "alignment": "center",
+                                                },
+                                                "legend": {
+                                                    "alignment": "center",
+                                                },
+                                                "color": {
+                                                    "scale": {
+                                                        "Excellent": colors.c1,
+                                                        "Good": colors.c2,
+                                                        "Fair": colors.c3,
+                                                        "Poor": colors.c4
+                                                    }
+                                                },
+                                                "toolbar":{
+                                                    "enabled": false,
+                                                },
+                                                "height": "335px",
+                                                "data": {
+                                                    "loading": chartsData.donut.tilesKpi.length == 0,
+                                                },
+                                            }}
+                                        />
                                     </div>
-                                {:else}
-                                    <div style="width:100%; padding:5px; text-align:center; text-transform:uppercase; background-color:{colors.c2}">
-                                        {cell.value}
+                                    <div class="container col start" style="width:300px; padding:12px;">
+                                        <BarChartGrouped
+                                            data={chartsData.barGroup.compareKpi}
+                                                options={{
+                                                    "axes": {
+                                                        "bottom": {
+                                                            "mapsTo": "value"
+                                                        },
+                                                        "left": {
+                                                            "scaleType": "labels",
+                                                            "mapsTo": "key"
+                                                        }
+                                                    },
+                                                    "bars": {
+                                                        "width": 40,
+                                                    },
+                                                    "height": "335px",
+                                                    "color": {
+                                                        "scale": {
+                                                            "Before": colors.c1,
+                                                            "After": colors.c2,
+                                                        }
+                                                    },
+                                                    "toolbar":{
+                                                        "enabled": false,
+                                                    },
+                                                    "data": {
+                                                        "loading": chartsData.barGroup.compareKpi == 0,
+                                                    },
+                                                }}
+                                            />
                                     </div>
-                                {/if}
-                            {:else}
-                                <div style="width:300px; text-overflow:ellipsis;">{cell.value}</div>
-                            {/if}
-                        </svelte:fragment>
-                    </DataTable>
-                    {#if chart.tableTilesDelta.length == 0}
-                        <div style="width:100%; text-align:center;">
-                            <div style="font-weight:500;">No data</div>
-                            <div>check one or more cell on the middle panel,<br>and click redraw</div>
+                                    <div class="container col start" style="width:calc(100% - 700px); border-right:1px solid #eee; padding:12px;">
+                                        <BarChartSimple
+                                            data={chartsData.bar.distributionSimulation}
+                                                options={{
+                                                    "axes": {
+                                                        "left": {
+                                                            "mapsTo": "value"
+                                                        },
+                                                        "bottom": {
+                                                            "scaleType": "linear",
+                                                            "mapsTo": "group",
+                                                            "includeZero": false,
+                                                        }
+                                                    },
+                                                    "legend": {
+                                                        "enabled": false,
+                                                    },
+                                                    "height": "335px",
+                                                    "getFillColor": function(group) {
+                                                        return colors.fromValue(group);
+                                                    },
+                                                    "toolbar":{
+                                                        "enabled": false,
+                                                    },
+                                                    "data": {
+                                                        "loading": chartsData.bar.distributionSimulation == 0,
+                                                    },
+                                                }}
+                                            />
+                                    </div>
+                                </div>
+            
+                                <div class="container row start" style="width:100%; height:300px;">
+                                    <div class="container row start" style="width:calc(50% - 6px); height:282px; margin-right:12px">
+                                        <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
+                                            <Bignumber 
+                                                field="upgraded" 
+                                                value={simulationStat.deltaUpgraded.value} 
+                                                color={colors.byDelta('Upgrade')}
+                                                direction={simulationStat.deltaUpgraded.change}
+                                                width="200px"/>
+                                            <div style="height:12px"/>
+                                            <Bignumber 
+                                                field="unchanged" 
+                                                value={simulationStat.deltaUnchanged.value} 
+                                                color={colors.byDelta('Unchange')}
+                                                direction={simulationStat.deltaUnchanged.change}
+                                                width="200px"/>
+                                            <div style="height:12px"/>
+                                            <Bignumber 
+                                                field="degraded" 
+                                                value={simulationStat.deltaDegraded.value} 
+                                                color={colors.byDelta('Degrade')}
+                                                direction={simulationStat.deltaDegraded.change}
+                                                width="200px"/>
+                                        </div>
+                                        <div style="width:calc(100% - 212px); padding:5px 0; background-color:#fff; border:1px solid #eee;">
+                                            <DonutChart 
+                                                data={chartsData.donut.delta}
+                                                options={{
+                                                    "data": {
+                                                    },
+                                                    "resizable": true,
+                                                    "donut": {
+                                                        "center": {
+                                                            "label": "Tiles"
+                                                        },
+                                                        "alignment": "center",
+                                                    },
+                                                    "legend": {
+                                                        "alignment": "center",
+                                                    },
+                                                    "color": {
+                                                        "scale": {
+                                                            "Upgrade": colors.c2,
+                                                            "Unchange": colors.c3,
+                                                            "Degrade": colors.c4,
+                                                        }
+                                                    },
+                                                    "toolbar":{
+                                                        "enabled": false,
+                                                    },
+                                                    "height": "250px",
+                                                    "data": {
+                                                        "loading": chartsData.donut.delta.length == 0,
+                                                    },
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                    <div class="container row start" style="width:calc(50% - 6px); height:282px;">
+                                        <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
+                                            <Bignumber 
+                                                field="safe" 
+                                                value={simulationStat.statusSafe.value} 
+                                                color={colors.byStatus('Safe')}
+                                                direction={simulationStat.statusSafe.change}
+                                                width="200px"/>
+                                            <div style="height:12px"/>
+                                            <Bignumber 
+                                                field="unsafe" 
+                                                value={simulationStat.statusUnsafe.value} 
+                                                color={colors.byStatus('Unsafe')}
+                                                direction={simulationStat.statusUnsafe.change}
+                                                width="200px"/>
+                                            <div style="height:12px"/>
+                                            <Bignumber 
+                                                field="fatal" 
+                                                value={simulationStat.statusFatal.value} 
+                                                color={colors.byStatus('Fatal')}
+                                                direction={simulationStat.statusFatal.change}
+                                                width="200px"/>
+                                        </div>
+                                        <div style="width:calc(100% - 212px); padding:5px 0; background-color:#fff; border:1px solid #eee;">
+                                            <DonutChart 
+                                                data={chartsData.donut.status}
+                                                options={{
+                                                    "data": {
+                                                    },
+                                                    "resizable": true,
+                                                    "donut": {
+                                                        "center": {
+                                                            "label": "Tiles"
+                                                        },
+                                                        "alignment": "center",
+                                                    },
+                                                    "legend": {
+                                                        "alignment": "center",
+                                                    },
+                                                    "color": {
+                                                        "scale": {
+                                                            "Safe": colors.c2,
+                                                            "Unsafe": colors.c4,
+                                                            "Fatal": "black",
+                                                        }
+                                                    },
+                                                    "toolbar":{
+                                                        "enabled": false,
+                                                    },
+                                                    "height": "250px",
+                                                    "data": {
+                                                        "loading": chartsData.donut.status.length == 0,
+                                                    },
+                                                }}
+                                            />
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
-                    {/if}
-                    <Pagination
-                        bind:pageSize={mainUi.table3PageSize}
-                        bind:page={mainUi.table3CurrentPage}
-                        totalItems={chart.tableTilesDelta.length}
-                        pageSizes={[10,15,20,50]}
-                        pageInputDisabled
-                    />
-                </div>
-            </div>
-            <div class="container row space-between" style="width:calc(100%); height:60px; align-items: center; padding: 0 14px;">
-                <div></div>
-                <div>
-                    <Button size="sm" kind="primary" on:click={() => SubpageDetailAnalysis = true}>Show details</Button>
-                </div>
-            </div>
-        </div-->
+                    </TabContent>
+                    <TabContent>
+                        <div class="container col start">
+                            <div class="container row start" style="width:100%; height:54px; background-color:white;"></div>
+                            <div class="container row start" style="width:100%; height:calc(100% - 50px); background-color:white;">
+                                <div id="before-map" style="width:calc(50% - 6px); height:676px; margin-right:12px;"></div>
+                                <div id="after-map" style="width:calc(50% - 6px); height:676px;"></div>
+                            </div>
+                        </div>
+                    </TabContent>
+                    <TabContent>Content 3</TabContent>
+                </svelte:fragment>
+            </Tabs>
+        </div>
     </div>
 </div>
 

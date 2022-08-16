@@ -19,7 +19,8 @@ export const addMap = {
     id: 'add-map',
     width: 670,
     height: 600,
-    center: [-6.175392, 106.827153],
+    // center: [-6.175392, 106.827153], // Jakarta
+    center: [3.597031, 98.678513], // Medan
     zoom: 13,
     drawControls: false,
     drawnItems: null,
@@ -30,7 +31,8 @@ export const editMap = {
     id: 'edit-map',
     width: 670,
     height: 550,
-    center: [-6.175392, 106.827153],
+    // center: [-6.175392, 106.827153], // Jakarta
+    center: [3.597031, 98.678513], // Medan
     zoom: 13,
     drawControls: true,
     drawnItems: null,
@@ -41,7 +43,8 @@ export const deleteMap = {
     id: 'delete-map',
     width: 670,
     height: 600,
-    center: [-6.175392, 106.827153],
+    // center: [-6.175392, 106.827153], // Jakarta
+    center: [3.597031, 98.678513], // Medan
     zoom: 13,
     drawControls: false,
     drawnItems: null,
@@ -52,7 +55,8 @@ export const beforeMap = {
     id: 'before-map',
     width: 390,
     height: 400,
-    center: [-6.175392, 106.827153],
+    // center: [-6.175392, 106.827153], // Jakarta
+    center: [3.597031, 98.678513], // Medan
     zoom: 13,
     drawControls: false,
     drawnItems: null,
@@ -66,7 +70,8 @@ export const afterMap = {
     id: 'after-map',
     width: 390,
     height: 400,
-    center: [-6.175392, 106.827153],
+    // center: [-6.175392, 106.827153], // Jakarta
+    center: [3.597031, 98.678513], // Medan
     zoom: 13,
     drawControls: false,
     drawnItems: null,
@@ -80,7 +85,8 @@ export const deltaMap = {
     id: 'delta-map',
     width: 520,
     height: 400,
-    center: [-6.175392, 106.827153],
+    // center: [-6.175392, 106.827153], // Jakarta
+    center: [3.597031, 98.678513], // Medan
     zoom: 13,
     drawControls: false,
     drawnItems: null,
@@ -253,11 +259,11 @@ export function setupMap(obj) {
                 remove: true
             }
         });
-    obj.map.addControl(drawControl);
-    obj.map.on('draw:created', function (e) {
+        obj.map.addControl(drawControl);
+        obj.map.on('draw:created', function (e) {
             var type = e.layerType,
                 layer = e.layer;
-         if (type === 'marker') {
+            if (type === 'marker') {
                 layer.bindPopup('A popup!');
             }
             obj.drawnItems.addLayer(layer);
