@@ -18,17 +18,17 @@ export function byCategory(cat) {
 
 export function byDelta(delta) {
     switch (delta) {
-        case "Upgrade": return c2;
-        case "Unchange": return c3;
-        case "Degrade": return c4;
+        case "UPGRADED": return c2;
+        case "UNCHANGE": return c3;
+        case "DEGRADED": return c4;
     }
 }
 
 export function byStatus(status) {
     switch (status) {
-        case "Safe": return c2;
-        case "Unsafe": return c4;
-        case "Fatal": return 'black';
+        case "SAFE": return c2;
+        case "UNSAFE": return c4;
+        case "FATAL": return 'black';
     }
 }
 

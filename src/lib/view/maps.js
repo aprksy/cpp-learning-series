@@ -160,8 +160,31 @@ export function drawTileKpi(mapObj, tileValues, tileLoc) {
                 stroke: false,
                 weight: 1, 
                 color: "#000",
-                fillOpacity: 0.6,
+                fillOpacity: 0.8,
                 fillColor: color.byCategory(value.category1),
+            });
+            mapObj.drawnItems.addLayer(tile);
+        }
+    }
+}
+
+export function drawTileChanges(mapObj, tileValues, tileLoc, changeType) {
+    if (tileValues) {
+        for (const [key, value] of Object.entries(tileValues)) {
+            let lat = tileLoc[key].lat
+            let lng = tileLoc[key].lng
+
+            let tileColor = color.byStatus(value.status);
+            if (changeType == 'delta') {
+                tileColor = color.byDelta(value.delta);
+            }
+
+            let tile = L.circle([lat, lng], {radius: 18.5}).setStyle({
+                stroke: false,
+                weight: 1, 
+                color: "#000",
+                fillOpacity: 0.8,
+                fillColor: tileColor,
             });
             mapObj.drawnItems.addLayer(tile);
         }
@@ -188,10 +211,32 @@ export function drawSites(mapObj, sites, dismantledSites) {
 }
 
 export function drawSimulationCategory(opt) {
-    clearMap(opt.mapObj)
-    drawBoundary(opt.mapObj, opt.boundaryData)
-    drawTileKpi(opt.mapObj, opt.simData.tiles, opt.allTiles)
+    clearMap(opt.mapObj);
+    drawBoundary(opt.mapObj, opt.boundaryData);
+    drawTileKpi(opt.mapObj, opt.simData.tiles, opt.allTiles);
     drawSites(opt.mapObj, opt.allSites, [opt.dismantledSite]);
+}
+
+export function drawOnMultimap(opt) {
+    // clear all maps
+    clearMap(mainMap);
+    clearMap(beforeMap);
+    clearMap(afterMap);
+    // draw boundary on each map
+    drawBoundary(mainMap, opt.boundaryData)
+    drawBoundary(beforeMap, opt.boundaryData)
+    drawBoundary(afterMap, opt.boundaryData)
+    // draw original tiles
+    drawTileKpi(mainMap, opt.oriData.tiles, opt.allTiles);
+    // draw simulated tiles
+    drawTileKpi(beforeMap, opt.simData.tiles, opt.allTiles);
+    // draw changes
+    // TODO: draw upgrade/unchange/degrade
+    drawTileChanges(afterMap, opt.simData.tiles, opt.allTiles, 'status');
+    // draw sites
+    drawSites(mainMap, opt.allSites, []);
+    drawSites(beforeMap, opt.allSites, [opt.dismantledSite]);
+    drawSites(afterMap, opt.allSites, [opt.dismantledSite]);
 }
 
 export let markerGroup;

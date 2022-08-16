@@ -76,6 +76,7 @@
     let moduleName = "Usecase 10 - Blacksite v1.1";
     let shouldFilterItem = mainUi.shouldFilterItem;
     let boundaries;
+    let boundaryId = '';
     let mapPage=1;
     let siteNames;
     let drawOptions;
@@ -120,6 +121,7 @@
             allTiles: data.simulationResult['tiles'],
             boundaryData: data.boundaryData,
             simData: data.simulationResult['original'],
+            oriData: data.simulationResult['original'],
         }
         simulationResult = data.simulationResult;
     }
@@ -331,7 +333,7 @@
                             placeholder="Select from registered boundary"
                             items={boundaries}
                             on:select={async (e) => {
-                                let boundaryId = e.detail.selectedItem.text;
+                                boundaryId = e.detail.selectedItem.text;
                                 let params = {
                                     date: '20220520',
                                     region: '01',
@@ -367,7 +369,19 @@
     
         <!-- Fine tune panel -->
         <div class="container col start" style="width:calc(67% - 12px); height:100%; background-color:#fafafa; overflow-y:clip;">
-            <Tabs selected={mapPage}>
+            <Tabs 
+                bind:selected={mapPage}
+                on:change={(e) => {
+                    console.log(mapPage + "; " + boundaryId);
+                    if (boundaryId != '') {
+                        if (mapPage == 0 || mapPage == 2) {
+                            maps.drawSimulationCategory(drawOptions);
+                        } else if (mapPage == 1) {
+                            maps.drawOnMultimap(drawOptions);
+                        }
+                    }
+                }}
+            >
                 <Tab label="Dashboard" />
                 <Tab label="Multimap" />
                 <Tab label="Tables" />
