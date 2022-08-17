@@ -54,7 +54,7 @@
         Link,
         Pagination,
     } from "carbon-components-svelte";
-    import { Upload, View, TreeView, Area, AreaCustom, WatsonHealthCircleMeasurement, ChartNetwork, Reset, CheckboxChecked, OrderDetails, Launch, Settings, Number_0, JoinRight, Label } from "carbon-icons-svelte";
+    import { Upload, View, Download, Area, AreaCustom, WatsonHealthCircleMeasurement, ChartNetwork, Reset, CheckboxChecked, OrderDetails, Launch, Settings, Number_0, JoinRight, Label } from "carbon-icons-svelte";
     import Drawer from 'svelte-drawer-component';
     import MapBoundary from "carbon-icons-svelte/lib/MapBoundary.svelte";
     import SettingsAdjust from "carbon-icons-svelte/lib/SettingsAdjust.svelte";
@@ -328,7 +328,7 @@
                 </div>
                 <!-- external boundary source panel -->
                 <div class="container row space-between" style="width:calc(100%); align-items: center; height:40px;">
-                    <div class="container row space-between" style="width:calc(50% - 13px); align-items:center;">
+                    <div class="container row space-between" style="width:calc(50% - 0); align-items:center;">
                         <ComboBox
                             size="sm"
                             placeholder="Select from registered boundary"
@@ -361,6 +361,7 @@
                         />
                         <Button  size="small" iconDescription="Custom Boundary" icon={AreaCustom} />
                     </div>
+                    <div style="width:12px"></div>
                     <div style="width:calc(50% + 0px)">
                         <ComboBox
                             size="sm"
@@ -713,7 +714,41 @@
                             </div>
                         </div>
                     </TabContent>
-                    <TabContent>Content 3</TabContent>
+                    <TabContent>
+                        <div class="container col start" style="background-color:white; height:803px; border:1px solid #eee; padding:12px;">
+                            <div class="container row space-between" style="width:100%; align-items:center; border-bottom:1px solid #eee; padding-bottom:12px;">
+                                <div class="container col stretch" style="width:400px;">
+                                    <ComboBox
+                                        size="sm"
+                                        placeholder="Select table"
+                                        items={boundaries}
+                                        on:select={async (e) => {
+                                            
+                                        }}
+                                        on:clear={(e) => {
+                                            
+                                        }}
+                                    />
+                                </div>
+                                <div class="container row end" style="width:750px;">
+                                    <!-- <Button size="small" icon={Download}>Download All</Button>
+                                    <Button size="small" icon={Download}>Download Raw</Button>
+                                    <Button size="small" icon={Download}>Download All CSV</Button>
+                                    <Button size="small" icon={Download}>Download This Table</Button> -->
+                                    <OverflowMenu open flipped  style="width: auto;">
+                                        <div slot="menu" class="container row" style="padding: 1rem;">
+                                            <div style="margin-right:12px;">Download</div>
+                                            <Download />
+                                        </div>
+                                        <OverflowMenuItem text="All (zipped)"/>
+                                        <OverflowMenuItem text="Raw (JSON)" />
+                                        <OverflowMenuItem text="All CSV (zipped)" />
+                                        <OverflowMenuItem text="This table (CSV)" />
+                                      </OverflowMenu>
+                                </div>
+                            </div>
+                        </div>
+                    </TabContent>
                 </svelte:fragment>
             </Tabs>
         </div>
