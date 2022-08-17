@@ -102,6 +102,12 @@ export function clearMap(obj) {
     obj.drawnItems.clearLayers();
 }
 
+export function clearAllMaps() {
+    clearMap(mainMap);
+    clearMap(beforeMap);
+    clearMap(afterMap);
+}
+
 export function redrawMap(obj, data) {
     if (data) {
         clearMap(obj);

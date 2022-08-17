@@ -328,7 +328,7 @@
                 </div>
                 <!-- external boundary source panel -->
                 <div class="container row space-between" style="width:calc(100%); align-items: center; height:40px;">
-                    <div style="width:calc(50% - 5px)">
+                    <div class="container row space-between" style="width:calc(50% - 13px); align-items:center;">
                         <ComboBox
                             size="sm"
                             placeholder="Select from registered boundary"
@@ -342,20 +342,62 @@
                                 }
                                 await client.performSimulation(params, onSimulationCompleted);
                                 drawOptions.mapObj = maps.mainMap;
-                                maps.drawSimulationCategory(drawOptions);
+                                if (boundaryId != '') {
+                                    if (mapPage == 0 || mapPage == 2) {
+                                        maps.drawSimulationCategory(drawOptions);
+                                    } else if (mapPage == 1) {
+                                        maps.drawOnMultimap(drawOptions);
+                                    }
+                                }
                                 drawOptions.simData = simulationResult["original"];
                                 computeStatistics(simulationResult["original"], drawOptions.simData);
                                 setupChartsData(simulationResult["original"], drawOptions.simData);
                             }}
                             on:clear={(e) => {
-                                maps.clearMap(maps.mainMap);
+                                maps.clearAllMaps();
                                 computeStatistics({}, {});
                                 setupChartsData({}, {});
                             }}
                         />
+                        <Button  size="small" iconDescription="Custom Boundary" icon={AreaCustom} />
                     </div>
-                    <div> - or - </div>
-                    <Button size="sm" kind="tertiary">Load from File</Button>
+                    <div style="width:calc(50% + 0px)">
+                        <ComboBox
+                            size="sm"
+                            placeholder="Select site to simulate dismantle"
+                            items={siteNames}
+                            on:select={(e) => {
+                                drawOptions.dismantledSite = e.detail.selectedId;
+                                if (e.detail.selectedId != '') {
+                                    drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
+                                } else {
+                                    drawOptions.simData = simulationResult["original"];
+                                }
+                                if (boundaryId != '') {
+                                    if (mapPage == 0 || mapPage == 2) {
+                                        maps.drawSimulationCategory(drawOptions);
+                                    } else if (mapPage == 1) {
+                                        maps.drawOnMultimap(drawOptions);
+                                    }
+                                }
+                                computeStatistics(simulationResult["original"], drawOptions.simData);
+                                setupChartsData(simulationResult["original"], drawOptions.simData);
+                            }}
+                            on:clear={(e) => {
+                                drawOptions.dismantledSite = '';
+                                drawOptions.simData = simulationResult["original"];
+                                if (boundaryId != '') {
+                                    if (mapPage == 0 || mapPage == 2) {
+                                        maps.drawSimulationCategory(drawOptions);
+                                    } else if (mapPage == 1) {
+                                        maps.drawOnMultimap(drawOptions);
+                                    }
+                                }
+                                computeStatistics(simulationResult["original"], drawOptions.simData);
+                                setupChartsData(simulationResult["original"], drawOptions.simData);
+                            }}
+                        />
+                    </div>
                 </div>
             </div>
             <!-- map panel -->
@@ -373,7 +415,6 @@
             <Tabs 
                 bind:selected={mapPage}
                 on:change={(e) => {
-                    console.log(mapPage + "; " + boundaryId);
                     if (boundaryId != '') {
                         if (mapPage == 0 || mapPage == 2) {
                             maps.drawSimulationCategory(drawOptions);
@@ -388,34 +429,7 @@
                 <Tab label="Tables" />
                 <svelte:fragment slot="content">
                     <TabContent>
-                        <div class="container col" style="width:calc(100%); height:100%; padding: 14px;">
-                            <div class="container row start" style="width:100%;">
-                                <div style="width:25%; padding-bottom:14px;">
-                                    <ComboBox
-                                        size="sm"
-                                        placeholder="Select site to simulate dismantle"
-                                        items={siteNames}
-                                        on:select={(e) => {
-                                            drawOptions.dismantledSite = e.detail.selectedId;
-                                            if (e.detail.selectedId != '') {
-                                                drawOptions.simData = simulationResult["simulation"][e.detail.selectedId];
-                                            } else {
-                                                drawOptions.simData = simulationResult["original"];
-                                            }
-                                            maps.drawSimulationCategory(drawOptions);
-                                            computeStatistics(simulationResult["original"], drawOptions.simData);
-                                            setupChartsData(simulationResult["original"], drawOptions.simData);
-                                        }}
-                                        on:clear={(e) => {
-                                            drawOptions.dismantledSite = '';
-                                            drawOptions.simData = simulationResult["original"];
-                                            maps.drawSimulationCategory(drawOptions);
-                                            computeStatistics(simulationResult["original"], drawOptions.simData);
-                                            setupChartsData(simulationResult["original"], drawOptions.simData);
-                                        }}
-                                    />
-                                </div>
-                            </div>
+                        <div class="container col" style="width:calc(100%); height:100%;">
                             <div class="container col start" style="width:100%; height:calc(100% - 60px);">
                                 <div style="display:flex; flex-flow:row nowrap; width:100%;">
                                     <Bignumber 
@@ -451,7 +465,7 @@
                                         width="calc((100% - 40px)/5)"/>
                                 </div>
             
-                                <div class="container row start" style="width:100%; height:380px; background-color:#fff; margin:12px 0; border:1px solid #eee;">
+                                <div class="container row start" style="width:100%; height:430px; background-color:#fff; margin:12px 0; border:1px solid #eee;">
                                     <div class="container col start" style="width:400px; padding:12px;">
                                         <DonutChart 
                                             data={chartsData.donut.tilesKpi}
@@ -479,7 +493,7 @@
                                                 "toolbar":{
                                                     "enabled": false,
                                                 },
-                                                "height": "335px",
+                                                "height": "385px",
                                                 "data": {
                                                     "loading": chartsData.donut.tilesKpi.length == 0,
                                                 },
@@ -502,7 +516,7 @@
                                                     "bars": {
                                                         "width": 40,
                                                     },
-                                                    "height": "335px",
+                                                    "height": "385px",
                                                     "color": {
                                                         "scale": {
                                                             "Before": colors.c1,
@@ -535,7 +549,7 @@
                                                     "legend": {
                                                         "enabled": false,
                                                     },
-                                                    "height": "335px",
+                                                    "height": "385px",
                                                     "getFillColor": function(group) {
                                                         return colors.fromValue(group);
                                                     },
@@ -670,26 +684,26 @@
                         </div>
                     </TabContent>
                     <TabContent>
-                        <div class="container col start" style="box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);">
+                        <div class="container col start" style="border:1px solid #eee;">
                             <div class="container row start" style="width:100%; height:54px; background-color:white;">
                                 <div style="width:calc(50% - 6px); margin-right:12px; padding:15px;">
                                     <div>AFTER 
-                                        <span style="font-weight:600;">{drawOptions ? drawOptions.dismantledSite:'(no site selected)'}</span> 
+                                        <span style="font-weight:600; color:#08a;">{drawOptions ? drawOptions.dismantledSite:'(no site selected)'}</span> 
                                             DISMANTLING
                                     </div>
                                 </div>
                                 <div style="width:calc(50% - 6px); padding:15px;">
                                     <div>
-                                        <span style="font-weight:600;">{drawOptions ? drawOptions.dismantledSite:'(no site selected)'}</span> 
+                                        <span style="font-weight:600; color:#08a;">{drawOptions ? drawOptions.dismantledSite:'(no site selected)'}</span> 
                                         FINAL STATUS
                                     </div>
                                 </div>
                             </div>
-                            <div class="container row start" style="width:100%; height:calc(100% - 50px); background-color:white;">
+                            <div class="container row start" style="width:100%; height:calc(100% - 75px); background-color:white;">
                                 <div id="before-map" style="width:calc(50% - 6px); height:676px; margin-right:12px;"></div>
                                 <div id="after-map" style="width:calc(50% - 6px); height:676px;"></div>
                             </div>
-                            <div class="container row start" style="width:100%; height:100px; background-color:white;">
+                            <div class="container row start" style="width:100%; height:71px; background-color:white;">
                                 <div style="width:calc(50% - 6px); margin-right:12px; padding:15px;">
                                     <Colorlegends items={colors.legends('simulation')}/>
                                 </div>
