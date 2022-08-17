@@ -10,8 +10,6 @@
         'down': 'red',
     };
     let rightMargin = rightMost ? 0: 10;
-    let up = direction == 'up' ? 'display:block': 'display:none';
-    let down = direction == 'down' ? 'display:block': 'display:none';
 </script>
 
 <div class="container" style="width:{width};margin-right:{rightMargin}px; overflow-y:auto;">

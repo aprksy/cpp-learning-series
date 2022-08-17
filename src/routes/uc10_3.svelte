@@ -71,6 +71,7 @@
     import * as chart from "../../src/lib/view/chartData";
     import * as client from "../../src/lib/controller/geoapiClient";
     import Bignumber from "$lib/view/bignumber.svelte";
+    import Colorlegends from "$lib/view/colorlegends.svelte";
 
     let isSideNavOpen = false;
     let moduleName = "Usecase 10 - Blacksite v1.1";
@@ -363,7 +364,7 @@
             </div>
             <!-- legend panel -->
             <div class="container row space-between" style="width:calc(100% - 28px); height:60px; align-items: center; margin: 0 14px;">
-                <div>Legend</div>
+                <Colorlegends items={colors.legends('original')}/>
             </div>
         </div>
     
@@ -555,21 +556,21 @@
                                             <Bignumber 
                                                 field="upgraded" 
                                                 value={simulationStat.deltaUpgraded.value} 
-                                                color={colors.byDelta('Upgrade')}
+                                                color={colors.byDelta('UPGRADED')}
                                                 direction={simulationStat.deltaUpgraded.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
                                                 field="unchanged" 
                                                 value={simulationStat.deltaUnchanged.value} 
-                                                color={colors.byDelta('Unchange')}
+                                                color={colors.byDelta('UNCHANGE')}
                                                 direction={simulationStat.deltaUnchanged.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
                                                 field="degraded" 
                                                 value={simulationStat.deltaDegraded.value} 
-                                                color={colors.byDelta('Degrade')}
+                                                color={colors.byDelta('DEGRADED')}
                                                 direction={simulationStat.deltaDegraded.change}
                                                 width="200px"/>
                                         </div>
@@ -612,21 +613,21 @@
                                             <Bignumber 
                                                 field="safe" 
                                                 value={simulationStat.statusSafe.value} 
-                                                color={colors.byStatus('Safe')}
+                                                color={colors.byStatus('SAFE')}
                                                 direction={simulationStat.statusSafe.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
                                                 field="unsafe" 
                                                 value={simulationStat.statusUnsafe.value} 
-                                                color={colors.byStatus('Unsafe')}
+                                                color={colors.byStatus('UNSAFE')}
                                                 direction={simulationStat.statusUnsafe.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
                                                 field="fatal" 
                                                 value={simulationStat.statusFatal.value} 
-                                                color={colors.byStatus('Fatal')}
+                                                color={colors.byStatus('FATAL')}
                                                 direction={simulationStat.statusFatal.change}
                                                 width="200px"/>
                                         </div>
@@ -669,11 +670,32 @@
                         </div>
                     </TabContent>
                     <TabContent>
-                        <div class="container col start">
-                            <div class="container row start" style="width:100%; height:54px; background-color:white;"></div>
+                        <div class="container col start" style="box-shadow: 1px 1px 4px rgba(0, 0, 0, 0.1);">
+                            <div class="container row start" style="width:100%; height:54px; background-color:white;">
+                                <div style="width:calc(50% - 6px); margin-right:12px; padding:15px;">
+                                    <div>AFTER 
+                                        <span style="font-weight:600;">{drawOptions ? drawOptions.dismantledSite:'(no site selected)'}</span> 
+                                            DISMANTLING
+                                    </div>
+                                </div>
+                                <div style="width:calc(50% - 6px); padding:15px;">
+                                    <div>
+                                        <span style="font-weight:600;">{drawOptions ? drawOptions.dismantledSite:'(no site selected)'}</span> 
+                                        FINAL STATUS
+                                    </div>
+                                </div>
+                            </div>
                             <div class="container row start" style="width:100%; height:calc(100% - 50px); background-color:white;">
                                 <div id="before-map" style="width:calc(50% - 6px); height:676px; margin-right:12px;"></div>
                                 <div id="after-map" style="width:calc(50% - 6px); height:676px;"></div>
+                            </div>
+                            <div class="container row start" style="width:100%; height:100px; background-color:white;">
+                                <div style="width:calc(50% - 6px); margin-right:12px; padding:15px;">
+                                    <Colorlegends items={colors.legends('simulation')}/>
+                                </div>
+                                <div style="width:calc(50% - 6px); padding:15px;">
+                                    <Colorlegends items={colors.legends('final-status')}/>
+                                </div>
                             </div>
                         </div>
                     </TabContent>
