@@ -13,6 +13,7 @@ export function byCategory(cat) {
         case "Fair": return c3;
         case "Good": return c2;
         case "Excellent": return c1;
+        case "Undefined": return 'black';
     }
 }
 
@@ -53,12 +54,14 @@ export function legends(kind) {
             result.push({color:byCategory('Fair'), label: 'Fair'});
             result.push({color:byCategory('Good'), label: 'Good'});
             result.push({color:byCategory('Excellent'), label: 'Excellent'});
+            result.push({color:byCategory('Undefined'), label: 'Undefined'});
             break;
         case 'simulation':
             result.push({color:byCategory('Poor'), label: 'Poor'});
             result.push({color:byCategory('Fair'), label: 'Fair'});
             result.push({color:byCategory('Good'), label: 'Good'});
             result.push({color:byCategory('Excellent'), label: 'Excellent'});
+            result.push({color:byCategory('Undefined'), label: 'Undefined'});
             break;
         case 'final-status':
             result.push({color:byStatus('SAFE'), label: 'SAFE'});

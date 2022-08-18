@@ -116,7 +116,7 @@
             colors: {},
         },
     }
-    let tabularIndex = 0;
+    let tabularIndex = -1;
     let tableSites = {
         title: 'Sites in boundary',
         description: 'Sites which is located in the boundary',
@@ -141,6 +141,7 @@
             {key: 'category', value: 'Category'},
         ],
     }
+    let tableSimulation = [];
 
     let tables = [];
 
@@ -164,6 +165,27 @@
             {id:0, text: 'Sites in boundary', tabularData:tableSites},
             {id:1, text: 'Tiles before simulation', tabularData:tableTilesOri},
         )
+
+        let i = 2;
+        for (const [siteid, value] of Object.entries(simulationResult.simulation)) {
+            let tableSim = {
+                title: 'Site ' + siteid +' dismantling',
+                description: 'Result from site ' + siteid + ' dismantling simulation',
+                header: [
+                    {key: 'no', value: 'No'},
+                    {key: 'id', value: 'ID'},
+                    {key: 'value0', value: 'RSRP 0'},
+                    {key: 'category0', value: 'Category 0'},
+                    {key: 'value1', value: 'RSRP 1'},
+                    {key: 'category1', value: 'Category 1'},
+                    {key: 'delta', value: 'Delta'},
+                    {key: 'status', value: 'Status'},
+                ],
+                data: tabular.generateSimulationTables(simulationResult, siteid),
+            }
+            tables.push({id:i, text: tableSim['title'], tabularData:tableSim});
+            i++;
+        }
     }
 
     function computeStatistics(data0, data1) {
@@ -761,11 +783,12 @@
                                         size="sm"
                                         placeholder="Select table"
                                         items={tables}
+                                        selected=0
                                         on:select={async (e) => {
                                             tabularIndex = e.detail.selectedId;
                                         }}
                                         on:clear={(e) => {
-                                            
+                                            tabularIndex = -1
                                         }}
                                     />
                                 </div>
