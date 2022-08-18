@@ -70,10 +70,11 @@
     import * as colors from "../../src/lib/view/colors";
     import * as chart from "../../src/lib/view/chartData";
     import * as client from "../../src/lib/controller/geoapiClient";
+    import * as tabular from "../../src/lib/controller/tabular";
     import Bignumber from "$lib/view/bignumber.svelte";
     import Colorlegends from "$lib/view/colorlegends.svelte";
-import Tabular from "$lib/view/tabular.svelte";
-import Multitabular from "$lib/view/multitabular.svelte";
+    import Tabular from "$lib/view/tabular.svelte";
+    import Multitabular from "$lib/view/multitabular.svelte";
 
     let isSideNavOpen = false;
     let moduleName = "Usecase 10 - Blacksite v1.1";
@@ -116,6 +117,32 @@ import Multitabular from "$lib/view/multitabular.svelte";
         },
     }
     let tabularIndex = 0;
+    let tableSites = {
+        title: 'Sites in boundary',
+        description: 'Sites which is located in the boundary',
+        header: [
+            {key: 'no', value: 'No'},
+            {key: 'id', value: 'ID'},
+            {key: 'name', value: 'Name'},
+            {key: 'lat', value: 'Latitude'},
+            {key: 'lng', value: 'Longitude'},
+            {key: 'type', value: 'Type'},
+        ],
+    }
+    let tableTilesOri = {
+        title: 'Tiles before dismantle',
+        description: 'Tiles value and category before dismantle simulation',
+        header: [
+            {key: 'no', value: 'No'},
+            {key: 'id', value: 'ID'},
+            {key: 'lat', value: 'Latitude'},
+            {key: 'lng', value: 'Longitude'},
+            {key: 'value', value: 'RSRP'},
+            {key: 'category', value: 'Category'},
+        ],
+    }
+
+    let tables = [];
 
     function onSimulationCompleted(data) {
         siteNames = data.siteNames;
@@ -128,6 +155,15 @@ import Multitabular from "$lib/view/multitabular.svelte";
             oriData: data.simulationResult['original'],
         }
         simulationResult = data.simulationResult;
+
+        // generate tables data
+        tableSites['data'] = tabular.generateSitesTable(simulationResult)
+        tableTilesOri['data'] = tabular.generateTilesOriTable(simulationResult)
+        
+        tables.push(
+            {id:0, text: 'Sites in boundary', tabularData:tableSites},
+            {id:1, text: 'Tiles before simulation', tabularData:tableTilesOri},
+        )
     }
 
     function computeStatistics(data0, data1) {
@@ -724,10 +760,7 @@ import Multitabular from "$lib/view/multitabular.svelte";
                                     <ComboBox
                                         size="sm"
                                         placeholder="Select table"
-                                        items={[
-                                            {id:0, text:'table-1'},
-                                            {id:1, text:'table-2'},
-                                        ]}
+                                        items={tables}
                                         on:select={async (e) => {
                                             tabularIndex = e.detail.selectedId;
                                         }}
@@ -750,8 +783,15 @@ import Multitabular from "$lib/view/multitabular.svelte";
                                 </div>
                             </div>
                             <Multitabular>
-                                <Tabular title='first table' visible={tabularIndex==0}/>
-                                <Tabular title='second table' visible={tabularIndex==1}/>
+                                {#each tables as table}
+                                    <Tabular 
+                                        title={table.tabularData.title} 
+                                        description={table.tabularData.description} 
+                                        header={table.tabularData.header}
+                                        data={table.tabularData.data}
+                                        visible={tabularIndex==table.id}
+                                    />
+                                {/each}
                             </Multitabular>
                         </div>
                     </TabContent>
