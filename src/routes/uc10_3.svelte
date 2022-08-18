@@ -72,6 +72,8 @@
     import * as client from "../../src/lib/controller/geoapiClient";
     import Bignumber from "$lib/view/bignumber.svelte";
     import Colorlegends from "$lib/view/colorlegends.svelte";
+import Tabular from "$lib/view/tabular.svelte";
+import Multitabular from "$lib/view/multitabular.svelte";
 
     let isSideNavOpen = false;
     let moduleName = "Usecase 10 - Blacksite v1.1";
@@ -113,6 +115,7 @@
             colors: {},
         },
     }
+    let tabularIndex = 0;
 
     function onSimulationCompleted(data) {
         siteNames = data.siteNames;
@@ -721,9 +724,12 @@
                                     <ComboBox
                                         size="sm"
                                         placeholder="Select table"
-                                        items={boundaries}
+                                        items={[
+                                            {id:0, text:'table-1'},
+                                            {id:1, text:'table-2'},
+                                        ]}
                                         on:select={async (e) => {
-                                            
+                                            tabularIndex = e.detail.selectedId;
                                         }}
                                         on:clear={(e) => {
                                             
@@ -731,22 +737,22 @@
                                     />
                                 </div>
                                 <div class="container row end" style="width:750px;">
-                                    <!-- <Button size="small" icon={Download}>Download All</Button>
-                                    <Button size="small" icon={Download}>Download Raw</Button>
-                                    <Button size="small" icon={Download}>Download All CSV</Button>
-                                    <Button size="small" icon={Download}>Download This Table</Button> -->
                                     <OverflowMenu open flipped  style="width: auto;">
                                         <div slot="menu" class="container row" style="padding: 1rem;">
                                             <div style="margin-right:12px;">Download</div>
                                             <Download />
                                         </div>
-                                        <OverflowMenuItem text="All (zipped)"/>
-                                        <OverflowMenuItem text="Raw (JSON)" />
-                                        <OverflowMenuItem text="All CSV (zipped)" />
                                         <OverflowMenuItem text="This table (CSV)" />
+                                        <OverflowMenuItem text="All CSV (zipped)" hasDivider/>
+                                        <OverflowMenuItem text="All (zipped)"/>
+                                        <OverflowMenuItem text="Raw (JSON)" hasDivider/>
                                       </OverflowMenu>
                                 </div>
                             </div>
+                            <Multitabular>
+                                <Tabular title='first table' visible={tabularIndex==0}/>
+                                <Tabular title='second table' visible={tabularIndex==1}/>
+                            </Multitabular>
                         </div>
                     </TabContent>
                 </svelte:fragment>
