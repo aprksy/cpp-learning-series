@@ -32,7 +32,7 @@
     <Pagination
         bind:pageSize={pagesize}
         bind:page={pageno}
-        totalItems={data.length}
+        totalItems={data?data.length:0}
         pageSizeInputDisabled
     />
 </div>
