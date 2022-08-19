@@ -84,6 +84,7 @@
     let mapPage=1;
     let siteNames;
     let drawOptions;
+    let exportPrefix = '20220520-boundaryId';
     let simulationResult;
     let simulationStat = {
         count: {value: 'N/A', change: 'N/A'},
@@ -185,6 +186,47 @@
             }
             tables.push({id:i, text: tableSim['title'], tabularData:tableSim});
             i++;
+        }
+    }
+
+    function exportToFile(fn, data, format) {
+        let dataFile;
+        let mime = 'text/plain';
+        if (format == 'csv') {
+            let header = [];
+            let content = [];
+            data.tabularData.header.forEach((e) => {
+                header.push(e.value);
+            });
+            data.tabularData.data.forEach((e) => {
+                let row = [];
+                for (const [key, value] of Object.entries(e)) {
+                    row.push(value);
+                }
+                content.push(row.join(','));
+            });
+            dataFile = header.join(',') + '\n' + content.join('\n')
+            mime = 'text/csv';
+        } else if (format == 'json') {
+            mime = 'application/json';
+            dataFile = JSON.stringify(data);
+        }
+
+        var blob = new Blob([dataFile], { type: mime + ';charset=utf-8;' });
+        if (navigator.msSaveBlob) { // IE 10+
+            navigator.msSaveBlob(blob, fn + '.' + format);
+        } else {
+            var link = document.createElement("a");
+            if (link.download !== undefined) { // feature detection
+                // Browsers that support HTML5 download attribute
+                var url = URL.createObjectURL(blob);
+                link.setAttribute("href", url);
+                link.setAttribute("download", fn + '.' + format);
+                link.style.visibility = 'hidden';
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
         }
     }
 
@@ -320,7 +362,7 @@
         // getBoundaries()
         if(browser) {
             maps.setupMap(maps.mainMap);
-            // setupMap(addMap);
+            maps.setupMap(maps.addMap);
             // setupMap(editMap);
             // setupMap(deleteMap);
             maps.setupMap(maps.beforeMap);
@@ -329,6 +371,14 @@
         }
         mapPage=0;
     });
+
+    let mapBoundaryAddOpen = false;
+    let uploadStatus = {
+        fileDate: 0,
+        fileSize: 0,
+        fileName: '',
+        status: '',
+    }
 </script>
   
 <Header company="Telkomsel" platformName={moduleName} bind:isSideNavOpen>
@@ -420,7 +470,14 @@
                                 setupChartsData({}, {});
                             }}
                         />
-                        <Button  size="small" iconDescription="Custom Boundary" icon={AreaCustom} />
+                        <Button 
+                            size="small" 
+                            iconDescription="Custom Boundary" 
+                            icon={AreaCustom} 
+                            on:click={e => {
+                                mapBoundaryAddOpen=true;
+                            }}
+                        />
                     </div>
                     <div style="width:12px"></div>
                     <div style="width:calc(50% + 0px)">
@@ -798,10 +855,25 @@
                                             <div style="margin-right:12px;">Download</div>
                                             <Download />
                                         </div>
-                                        <OverflowMenuItem text="This table (CSV)" />
+                                        <OverflowMenuItem 
+                                            text="This table (CSV)" 
+                                            on:click={(e) => {
+                                                let fn = exportPrefix + '-' + 
+                                                    tables[tabularIndex].tabularData.title.split(' ').join('_').toLowerCase();
+                                                exportToFile(fn, tables[tabularIndex], 'csv');
+                                            }}
+                                        />
                                         <OverflowMenuItem text="All CSV (zipped)" hasDivider/>
                                         <OverflowMenuItem text="All (zipped)"/>
-                                        <OverflowMenuItem text="Raw (JSON)" hasDivider/>
+                                        <OverflowMenuItem 
+                                            text="Raw (JSON)" 
+                                            hasDivider
+                                            on:click={(e) => {
+                                                console.log(simulationResult);
+                                                let fn = exportPrefix + '-simulation_result';
+                                                exportToFile(fn, simulationResult, 'json');
+                                            }}
+                                        />
                                       </OverflowMenu>
                                 </div>
                             </div>
@@ -823,6 +895,139 @@
         </div>
     </div>
 </div>
+
+<Modal
+    passiveModal
+    size="lg"
+    bind:open={mapBoundaryAddOpen}
+    modalHeading="Manage Boundaries"
+    on:click:button--secondary={() => (mapBoundaryAddOpen = false)}
+    on:open
+    on:close={(e) => {
+        maps.clearMap(maps.addMap)
+    }}
+    on:submit={(e) => {
+        e.preventDefault();
+        let name = document.getElementById("addBound-name").value
+        let type = document.getElementById("addBound-type").value
+        let tags = document.getElementById("addBound-tags").value
+        let files = document.getElementById("addBound-file").files
+
+        let fr = new FileReader();
+        let newJson = {
+            name: name,
+            tags: tags,
+            type: type,
+        }
+        fr.onload = function(e1) { 
+            var result = e1.target.result;
+            // var file = JSON.stringify(result, null, 2);
+            newJson["file"] = btoa(unescape(encodeURIComponent(result)))
+            addBoundary(newJson)
+        }
+        fr.readAsText(files.item(0));
+    }}
+>
+    <Tabs 
+    >
+        <Tab label="Draw Map" />
+        <Tab label="Upload Map" />
+        <Tab label="Edit Map" />
+        <Tab label="Delete Map" />
+        <svelte:fragment slot="content">
+            <TabContent></TabContent>
+            <TabContent></TabContent>
+            <TabContent></TabContent>
+            <TabContent></TabContent>
+        </svelte:fragment>
+    </Tabs>
+    <div class="container row space-between" style="height:600px;">
+        <div style="width:50%; height:100%">
+            <div class="container col start stretch" style="padding-right:20px;">
+                <TextInput id="addBound-name" labelText="Boundary name" placeholder="Enter boundary name..." required />
+                <div style="min-height:20px;"/>
+                <ComboBox
+                    id="addBound-type"
+                    titleText="Format type"
+                    placeholder="Select format type"
+                    items={[
+                        {id: 0, text: "geojson", desc: "standard GeoJSON format"},
+                        {id: 1, text: "mapinfo", desc: "standard MapInfo format" },
+                        {id: 2, text: "simple-shape", desc: "support for Circle and Bounding box"},
+                        {id: 3, text: "pg-coordlist", desc: "Polygon using coordinate list"},
+                        {id: 4, text: "pl-coordlist", desc: "Polyline using coordinate list"},
+                    ]}
+                    on:select={(e) => {
+                        
+                    }}
+                    on:clear={e => clearMap(mainMap)}
+                    let:item
+                >
+                    <div>
+                        <strong>{item.text}</strong>
+                    </div>
+                    <div>
+                        {item.desc}
+                    </div>
+                </ComboBox>
+                <div style="min-height:20px;"/>
+                <TextInput id="addBound-tags" labelText="Tags" placeholder="Multiple tags separate by space" />
+                <div style="min-height:20px;"/>
+                <FileUploaderDropContainer
+                    id="addBound-file"
+                    labelText="Drag and drop files here or click to upload"
+                    accept={[".json", ".zip", ".txt", "csv"]}
+                    validateFiles={(files) => {
+                        return files.filter((file) => true);
+                    }}
+                    on:change={(e) => {
+                        let type = document.getElementById("addBound-type").value
+                        let files = document.getElementById("addBound-file").files
+
+                        let fr = new FileReader();
+                        fr.onload = function(e1) { 
+                            var result = e1.target.result;
+                            console.log(result)
+                            if (type == "geojson") {
+                                maps.redrawMap(maps.addMap, [JSON.parse(result)]);
+                            }
+                        }
+                        fr.readAsText(files.item(0));
+                        
+                        uploadStatus.fileDate = e.detail[0].lastModified;
+                        uploadStatus.fileSize = e.detail[0].size;
+                        uploadStatus.fileName = e.detail[0].name;
+                        uploadStatus.status = uploadStatus.fileSize > 1024 * 1024 ? "failed": "success";
+
+                    }}
+                />
+                {#if uploadStatus.status=="failed"}
+                    <FileUploaderItem
+                        invalid
+                        id="readme"
+                        name={uploadStatus.fileName}
+                        errorSubject="File size exceeds 1.0MB limit"
+                        errorBody="Please select a new file."
+                        status="edit"
+                        on:delete
+                    />
+                {/if}
+                {#if uploadStatus.status=="success"}
+                    <FileUploaderItem
+                        id="readme"
+                        name={uploadStatus.fileName}
+                        status="complete"
+
+                        on:delete
+                    />
+                {/if}
+            </div>
+        </div>
+        <div style="width:50%; height:100%; background-color:#ddd;">
+            <div id="add-map" style="width:{maps.addMap.width}px; height:{maps.addMap.height}px;"></div>
+        </div>
+    </div>
+</Modal>
 
 <style>
     @import 'https://unpkg.com/leaflet@1.7.1/dist/leaflet.css';
