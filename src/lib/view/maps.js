@@ -7,7 +7,7 @@ export const mainMap = {
     // center: [-6.175392, 106.827153], // Jakarta
     center: [3.597031, 98.678513], // Medan
     zoom: 13,
-    drawControls: true,
+    drawControls: false,
     drawnItems: null,
     tileLayerGroupActual: null,
     tileLayerGroupSimulation: null,

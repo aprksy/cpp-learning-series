@@ -1,8 +1,8 @@
 import { groupLimits } from "$lib/model/defaults";
 
-export let c1 = "#1984c5"
-export let c2 = "#4cb4a5"
-export let c3 = "orange"
+export let c1 = "#3944c5"
+export let c2 = "#2cb485"
+export let c3 = "#ff7700"
 export let c4 = "#c80064"
 
 let colors = [c4, c3, c2, c1];
