@@ -4,4 +4,4 @@ export let oneBoundary = host + "/boundaries?id=";
 export let siteIntersects = host + "/sites/intersects";
 export let siteDetails = host + "/sites/details";
 export let siteCells = host + "/sites/cells";
-export let simulation = host + "/simulation/ui";
+export let simulation = host + "/simulation/ui/kpi";

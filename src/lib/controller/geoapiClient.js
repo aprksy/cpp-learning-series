@@ -127,7 +127,7 @@ export async function fetchSiteCells(date, region, ids) {
     return result
 }
 
-export async function doSimulation(date, region, boundaryId, tile, gNames, gLimits, minCatIdx, sites) {
+export async function doSimulation(date, region, boundaryId, tile, kpi, gNames, gLimits, minCatIdx, sites) {
     const res = await fetch(urls.simulation, {
         method: 'POST',
         headers: {
@@ -138,6 +138,7 @@ export async function doSimulation(date, region, boundaryId, tile, gNames, gLimi
             "region": region, 
             "boundaryId": boundaryId,
             "tile": tile,
+            "kpi": kpi,
             "groupNames": gNames,
             "groupLimits": gLimits,
             "sites": sites,
@@ -166,7 +167,7 @@ export async function performSimulation(params, callback) {
     let siteNames = getSiteNamesInBoundary(siteDetails);
     let siteCells = await fetchSiteCells(p['date'], p['region'], siteIds);
     let simulationResult = await doSimulation(p['date'], p['region'], p['boundaryId'], p['tileField'], 
-        p['groupNames'], p['groupLimits'], p['minCatIndex'], siteIds);
+        p['kpi'], p['groupNames'], p['groupLimits'], p['minCatIndex'], siteIds);
 
     if (callback) {
         callback({

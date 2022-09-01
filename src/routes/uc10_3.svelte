@@ -82,6 +82,8 @@
     let boundaries;
     let boundaryId = '';
     let mapPage=1;
+    let selectedDate="2022-05-20";
+    let selectedRegion="01";
     let siteNames;
     let drawOptions;
     let exportPrefix = '20220520-boundaryId';
@@ -417,7 +419,10 @@
                 <!-- date & regional panel -->
                 <div class="container row space-between" style="width:calc(100%); height:40px;">
                     <div style="width:50%">
-                        <DatePicker datePickerType="single" on:change>
+                        <DatePicker 
+                            datePickerType="single" 
+                            bind:value={selectedDate} 
+                            dateFormat="Y-m-d">
                             <DatePickerInput size="sm" placeholder="mm/dd/yyyy" />
                         </DatePicker>
                     </div>
@@ -425,6 +430,7 @@
                         <ComboBox
                             size="sm"
                             placeholder="Select regional"
+                            bind:selectedId={selectedRegion}
                             items={defaults.regionals}
                             on:select={(e) => {
                                 //storeRegionalsSelected.set(e.detail.selectedItem)
@@ -447,9 +453,11 @@
                             on:select={async (e) => {
                                 boundaryId = e.detail.selectedItem.text;
                                 let params = {
-                                    date: '20220520',
-                                    region: '01',
+                                    date: selectedDate.replace(/-/g, ''),
+                                    region: selectedRegion,
                                     boundaryId: boundaryId,
+                                    tileField: 'tileCovmo',
+                                    kpi: 'rsrp',
                                 }
                                 await client.performSimulation(params, onSimulationCompleted);
                                 drawOptions.mapObj = maps.mainMap;
@@ -463,6 +471,7 @@
                                 drawOptions.simData = simulationResult["original"];
                                 computeStatistics(simulationResult["original"], drawOptions.simData);
                                 setupChartsData(simulationResult["original"], drawOptions.simData);
+                                tabularIndex = tabularIndex != -1 ? tabularIndex: 0;
                             }}
                             on:clear={(e) => {
                                 maps.clearAllMaps();
@@ -840,7 +849,7 @@
                                         size="sm"
                                         placeholder="Select table"
                                         items={tables}
-                                        selected=0
+                                        selectedId={tabularIndex}
                                         on:select={async (e) => {
                                             tabularIndex = e.detail.selectedId;
                                         }}
