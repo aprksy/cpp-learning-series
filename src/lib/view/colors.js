@@ -9,11 +9,11 @@ let colors = [c4, c3, c2, c1];
 
 export function byCategory(cat) {
     switch (cat) {
-        case "Poor": return c4;
-        case "Fair": return c3;
-        case "Good": return c2;
-        case "Excellent": return c1;
-        case "Undefined": return 'black';
+        case "POOR": return c4;
+        case "FAIR": return c3;
+        case "GOOD": return c2;
+        case "EXCELLENT": return c1;
+        case "UNDEFINED": return 'black';
     }
 }
 
@@ -50,18 +50,18 @@ export function legends(kind) {
     let result = [];
     switch (kind) {
         case 'original':
-            result.push({color:byCategory('Poor'), label: 'Poor'});
-            result.push({color:byCategory('Fair'), label: 'Fair'});
-            result.push({color:byCategory('Good'), label: 'Good'});
-            result.push({color:byCategory('Excellent'), label: 'Excellent'});
-            result.push({color:byCategory('Undefined'), label: 'Undefined'});
+            result.push({color:byCategory('POOR'), label: 'POOR'});
+            result.push({color:byCategory('FAIR'), label: 'FAIR'});
+            result.push({color:byCategory('GOOD'), label: 'GOOD'});
+            result.push({color:byCategory('EXCELLENT'), label: 'EXCELLENT'});
+            result.push({color:byCategory('UNDEFINED'), label: 'UNDEFINED'});
             break;
         case 'simulation':
-            result.push({color:byCategory('Poor'), label: 'Poor'});
-            result.push({color:byCategory('Fair'), label: 'Fair'});
-            result.push({color:byCategory('Good'), label: 'Good'});
-            result.push({color:byCategory('Excellent'), label: 'Excellent'});
-            result.push({color:byCategory('Undefined'), label: 'Undefined'});
+            result.push({color:byCategory('POOR'), label: 'POOR'});
+            result.push({color:byCategory('FAIR'), label: 'FAIR'});
+            result.push({color:byCategory('GOOD'), label: 'GOOD'});
+            result.push({color:byCategory('EXCELLENT'), label: 'EXCELLENT'});
+            result.push({color:byCategory('UNDEFINED'), label: 'UNDEFINED'});
             break;
         case 'final-status':
             result.push({color:byStatus('SAFE'), label: 'SAFE'});
