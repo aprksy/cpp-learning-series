@@ -247,24 +247,24 @@
                 'change': data1.max - data0.max > 0 ? 'up': data1.max - data0.max == 0 ? 'none': 'down',
             },
             'catExcellent': {
-                'value': data1.category.Excellent,
-                'change': data1.category.Excellent - data0.category.Excellent > 0 ? 
-                    'up': data1.category.Excellent - data0.category.Excellent == 0 ? 'none': 'down',
+                'value': data1.category.EXCELLENT,
+                'change': data1.category.EXCELLENT - data0.category.EXCELLENT > 0 ? 
+                    'up': data1.category.EXCELLENT - data0.category.EXCELLENT == 0 ? 'none': 'down',
             },
             'catGood': {
-                'value': data1.category.Good,
-                'change': data1.category.Good - data0.category.Good > 0 ? 
-                    'up': data1.category.Good - data0.category.Good == 0 ? 'none': 'down',
+                'value': data1.category.GOOD,
+                'change': data1.category.GOOD - data0.category.GOOD > 0 ? 
+                    'up': data1.category.GOOD - data0.category.GOOD == 0 ? 'none': 'down',
             },
             'catFair': {
-                'value': data1.category.Fair,
-                'change': data1.category.Fair - data0.category.Fair > 0 ? 
-                    'up': data1.category.Fair - data0.category.Fair == 0 ? 'none': 'down',
+                'value': data1.category.FAIR,
+                'change': data1.category.FAIR - data0.category.FAIR > 0 ? 
+                    'up': data1.category.FAIR - data0.category.FAIR == 0 ? 'none': 'down',
             },
             'catPoor': {
-                'value': data1.category.Poor,
-                'change': data1.category.Poor - data0.category.Poor > 0 ? 
-                    'up': data1.category.Poor - data0.category.Poor == 0 ? 'none': 'down',
+                'value': data1.category.POOR,
+                'change': data1.category.POOR - data0.category.POOR > 0 ? 
+                    'up': data1.category.POOR - data0.category.POOR == 0 ? 'none': 'down',
             },
             'deltaUpgraded': {
                 'value': data1.deltaSummary ? data1.deltaSummary.UPGRADED: 'N/A',
@@ -318,32 +318,32 @@
         chartsData = {
             donut: {
                 tilesKpi: [
-                    {"group": "Excellent", "value": data1.category.Excellent},
-                    {"group": "Good", "value": data1.category.Good},
-                    {"group": "Fair", "value": data1.category.Fair},
-                    {"group": "Poor", "value": data1.category.Poor},
+                    {"group": "EXCELLENT", "value": data1.category.EXCELLENT},
+                    {"group": "GOOD", "value": data1.category.GOOD},
+                    {"group": "FAIR", "value": data1.category.FAIR},
+                    {"group": "POOR", "value": data1.category.POOR},
                 ],
                 delta: [
-                    {"group": "Upgrade", "value": data1.deltaSummary ? data1.deltaSummary.UPGRADED: 0},
-                    {"group": "Unchange", "value": data1.deltaSummary ? data1.deltaSummary.UNCHANGE: 0},
-                    {"group": "Degrade", "value": data1.deltaSummary ? data1.deltaSummary.DEGRADED: 0},
+                    {"group": "UPGRADE", "value": data1.deltaSummary ? data1.deltaSummary.UPGRADED: 0},
+                    {"group": "UNCHANGE", "value": data1.deltaSummary ? data1.deltaSummary.UNCHANGE: 0},
+                    {"group": "DEGRADE", "value": data1.deltaSummary ? data1.deltaSummary.DEGRADED: 0},
                 ],
                 status: [
-                    {"group": "Safe", "value": data1.deltaSummary ? data1.statusSummary.SAFE: 0},
-                    {"group": "Unsafe", "value": data1.deltaSummary ? data1.statusSummary.UNSAFE: 0},
-                    {"group": "Fatal", "value": data1.deltaSummary ? data1.statusSummary.FATAL: 0},
+                    {"group": "SAFE", "value": data1.deltaSummary ? data1.statusSummary.SAFE: 0},
+                    {"group": "UNSAFE", "value": data1.deltaSummary ? data1.statusSummary.UNSAFE: 0},
+                    {"group": "FATAL", "value": data1.deltaSummary ? data1.statusSummary.FATAL: 0},
                 ],
             },
             barGroup: {
                 compareKpi: [
-                    {"group":"After", "key": "Excellent", "value": data1.category.Excellent},
-                    {"group":"After", "key": "Good", "value": data1.category.Good},
-                    {"group":"After", "key": "Fair", "value": data1.category.Fair},
-                    {"group":"After", "key": "Poor", "value": data1.category.Poor},
-                    {"group":"Before", "key": "Excellent", "value": data0.category.Excellent},
-                    {"group":"Before", "key": "Good", "value": data0.category.Good},
-                    {"group":"Before", "key": "Fair", "value": data0.category.Fair},
-                    {"group":"Before", "key": "Poor", "value": data0.category.Poor},
+                    {"group":"AFTER", "key": "EXCELLENT", "value": data1.category.EXCELLENT},
+                    {"group":"AFTER", "key": "GOOD", "value": data1.category.GOOD},
+                    {"group":"AFTER", "key": "FAIR", "value": data1.category.FAIR},
+                    {"group":"AFTER", "key": "POOR", "value": data1.category.POOR},
+                    {"group":"BEFORE", "key": "EXCELLENT", "value": data0.category.EXCELLENT},
+                    {"group":"BEFORE", "key": "GOOD", "value": data0.category.GOOD},
+                    {"group":"BEFORE", "key": "FAIR", "value": data0.category.FAIR},
+                    {"group":"BEFORE", "key": "POOR", "value": data0.category.POOR},
                 ],
             },
             bar: {
@@ -567,27 +567,27 @@
                                         direction={simulationStat.count.change}
                                         width="calc((100% - 40px)/5)"/>
                                     <Bignumber 
-                                        field="Excellent" 
+                                        field="EXCELLENT" 
                                         value={simulationStat.catExcellent.value} 
-                                        color={colors.byCategory("Excellent")} 
+                                        color={colors.byCategory("EXCELLENT")} 
                                         direction={simulationStat.catExcellent.change}
                                         width="calc((100% - 40px)/5)"/>
                                     <Bignumber 
-                                        field="Good" 
+                                        field="GOOD" 
                                         value={simulationStat.catGood.value} 
-                                        color={colors.byCategory("Good")} 
+                                        color={colors.byCategory("GOOD")} 
                                         direction={simulationStat.catGood.change}
                                         width="calc((100% - 40px)/5)"/>
                                     <Bignumber 
-                                        field="Fair" 
+                                        field="FAIR" 
                                         value={simulationStat.catFair.value} 
-                                        color={colors.byCategory("Fair")} 
+                                        color={colors.byCategory("FAIR")} 
                                         direction={simulationStat.catFair.change}
                                         width="calc((100% - 40px)/5)"/>
                                     <Bignumber 
-                                        field="Poor" 
+                                        field="POOR" 
                                         value={simulationStat.catPoor.value} 
-                                        color={colors.byCategory("Poor")} 
+                                        color={colors.byCategory("POOR")} 
                                         direction={simulationStat.catPoor.change}
                                         rightMost 
                                         width="calc((100% - 40px)/5)"/>
@@ -612,10 +612,10 @@
                                                 },
                                                 "color": {
                                                     "scale": {
-                                                        "Excellent": colors.c1,
-                                                        "Good": colors.c2,
-                                                        "Fair": colors.c3,
-                                                        "Poor": colors.c4
+                                                        "EXCELLENT": colors.c1,
+                                                        "GOOD": colors.c2,
+                                                        "FAIR": colors.c3,
+                                                        "POOR": colors.c4
                                                     }
                                                 },
                                                 "toolbar":{
@@ -647,8 +647,8 @@
                                                     "height": "385px",
                                                     "color": {
                                                         "scale": {
-                                                            "Before": colors.c1,
-                                                            "After": colors.c2,
+                                                            "BEFORE": colors.c1,
+                                                            "AFTER": colors.c2,
                                                         }
                                                     },
                                                     "toolbar":{
@@ -696,21 +696,21 @@
                                     <div class="container row start" style="width:calc(50% - 6px); height:282px; margin-right:12px">
                                         <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
                                             <Bignumber 
-                                                field="upgraded" 
+                                                field="UPGRADE" 
                                                 value={simulationStat.deltaUpgraded.value} 
                                                 color={colors.byDelta('UPGRADED')}
                                                 direction={simulationStat.deltaUpgraded.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
-                                                field="unchanged" 
+                                                field="UNCHANGE" 
                                                 value={simulationStat.deltaUnchanged.value} 
                                                 color={colors.byDelta('UNCHANGE')}
                                                 direction={simulationStat.deltaUnchanged.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
-                                                field="degraded" 
+                                                field="DEGRADE" 
                                                 value={simulationStat.deltaDegraded.value} 
                                                 color={colors.byDelta('DEGRADED')}
                                                 direction={simulationStat.deltaDegraded.change}
@@ -734,9 +734,9 @@
                                                     },
                                                     "color": {
                                                         "scale": {
-                                                            "Upgrade": colors.c2,
-                                                            "Unchange": colors.c3,
-                                                            "Degrade": colors.c4,
+                                                            "UPGRADE": colors.c2,
+                                                            "UNCHANGE": colors.c3,
+                                                            "DEGRADE": colors.c4,
                                                         }
                                                     },
                                                     "toolbar":{
@@ -753,21 +753,21 @@
                                     <div class="container row start" style="width:calc(50% - 6px); height:282px;">
                                         <div style="display:flex; flex-flow:column nowrap; width:200px; margin-right:12px;">
                                             <Bignumber 
-                                                field="safe" 
+                                                field="SAFE" 
                                                 value={simulationStat.statusSafe.value} 
                                                 color={colors.byStatus('SAFE')}
                                                 direction={simulationStat.statusSafe.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
-                                                field="unsafe" 
+                                                field="UNSAFE" 
                                                 value={simulationStat.statusUnsafe.value} 
                                                 color={colors.byStatus('UNSAFE')}
                                                 direction={simulationStat.statusUnsafe.change}
                                                 width="200px"/>
                                             <div style="height:12px"/>
                                             <Bignumber 
-                                                field="fatal" 
+                                                field="FATAL" 
                                                 value={simulationStat.statusFatal.value} 
                                                 color={colors.byStatus('FATAL')}
                                                 direction={simulationStat.statusFatal.change}
@@ -791,9 +791,9 @@
                                                     },
                                                     "color": {
                                                         "scale": {
-                                                            "Safe": colors.c2,
-                                                            "Unsafe": colors.c4,
-                                                            "Fatal": "black",
+                                                            "SAFE": colors.c2,
+                                                            "UNSAFE": colors.c4,
+                                                            "FATAL": "black",
                                                         }
                                                     },
                                                     "toolbar":{

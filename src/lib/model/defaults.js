@@ -13,7 +13,7 @@ export const regionals = [
     { id: "12", text: "REGIONAL - 12" },
 ];
 
-export const groupNames = ["Poor", "Fair", "Good", "Excellent"];
+export const groupNames = ["POOR", "FAIR", "GOOD", "EXCELLENT"];
 export const groupLimits = [-200, -110, -102, -97, 0];
 export const minCatIndex = 1;
 export const tileField = "tileCovmo";
