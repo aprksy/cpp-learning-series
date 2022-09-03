@@ -156,13 +156,13 @@ export function drawBoundary(mapObj, boundaryData) {
     }
 }
 
-export function drawTileKpi(mapObj, tileValues, tileLoc) {
+export function drawTileKpi(mapObj, tileValues, tileLoc, tileRadius) {
     if (tileValues) {
         for (const [key, value] of Object.entries(tileValues)) {
             let lat = tileLoc[key].lat
             let lng = tileLoc[key].lng
 
-            let tile = L.circle([lat, lng], {radius: 18.5}).setStyle({
+            let tile = L.circle([lat, lng], {radius: tileRadius}).setStyle({
                 stroke: false,
                 weight: 1, 
                 color: "#000",
@@ -174,7 +174,7 @@ export function drawTileKpi(mapObj, tileValues, tileLoc) {
     }
 }
 
-export function drawTileChanges(mapObj, tileValues, tileLoc, changeType) {
+export function drawTileChanges(mapObj, tileValues, tileLoc, tileRadius, changeType) {
     if (tileValues) {
         for (const [key, value] of Object.entries(tileValues)) {
             let lat = tileLoc[key].lat
@@ -185,7 +185,7 @@ export function drawTileChanges(mapObj, tileValues, tileLoc, changeType) {
                 tileColor = color.byDelta(value.delta);
             }
 
-            let tile = L.circle([lat, lng], {radius: 18.5}).setStyle({
+            let tile = L.circle([lat, lng], {radius: tileRadius}).setStyle({
                 stroke: false,
                 weight: 1, 
                 color: "#000",
@@ -219,7 +219,7 @@ export function drawSites(mapObj, sites, dismantledSites) {
 export function drawSimulationCategory(opt) {
     clearMap(opt.mapObj);
     drawBoundary(opt.mapObj, opt.boundaryData);
-    drawTileKpi(opt.mapObj, opt.simData.tiles, opt.allTiles);
+    drawTileKpi(opt.mapObj, opt.simData.tiles, opt.allTiles, opt.tileRadius);
     drawSites(opt.mapObj, opt.allSites, [opt.dismantledSite]);
 }
 
@@ -232,13 +232,14 @@ export function drawOnMultimap(opt) {
     drawBoundary(mainMap, opt.boundaryData)
     drawBoundary(beforeMap, opt.boundaryData)
     drawBoundary(afterMap, opt.boundaryData)
+
     // draw original tiles
-    drawTileKpi(mainMap, opt.oriData.tiles, opt.allTiles);
+    drawTileKpi(mainMap, opt.oriData.tiles, opt.allTiles, opt.tileRadius);
     // draw simulated tiles
-    drawTileKpi(beforeMap, opt.simData.tiles, opt.allTiles);
+    drawTileKpi(beforeMap, opt.simData.tiles, opt.allTiles, opt.tileRadius);
     // draw changes
     // TODO: draw upgrade/unchange/degrade
-    drawTileChanges(afterMap, opt.simData.tiles, opt.allTiles, 'status');
+    drawTileChanges(afterMap, opt.simData.tiles, opt.allTiles, opt.tileRadius, 'status');
     // draw sites
     drawSites(mainMap, opt.allSites, []);
     drawSites(beforeMap, opt.allSites, [opt.dismantledSite]);
