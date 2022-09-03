@@ -152,6 +152,7 @@
         siteNames = data.siteNames;
         drawOptions = {
             dismantledSite: '',
+            tileRadius: data.simulationResult['tileRadius'],
             allSites: data.simulationResult['sites'],
             allTiles: data.simulationResult['tiles'],
             boundaryData: data.boundaryData,
@@ -456,7 +457,8 @@
                                     date: selectedDate.replace(/-/g, ''),
                                     region: selectedRegion,
                                     boundaryId: boundaryId,
-                                    tileField: 'tileCovmo',
+                                    // tileField: 'tileCovmo',
+                                    tileField: 'tileGeohash9',
                                     kpi: 'rsrp',
                                 }
                                 await client.performSimulation(params, onSimulationCompleted);
