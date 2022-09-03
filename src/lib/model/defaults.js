@@ -13,6 +13,14 @@ export const regionals = [
     { id: "12", text: "REGIONAL - 12" },
 ];
 
+export const gridSizes = [
+    { id: "tileCovmo", text: "Covmo Grid" },
+    { id: "tileGeohash7", text: "Geohash 7" },
+    { id: "tileGeohash9", text: "Geohash 9" },
+    { id: "tileGeohash9_2x2", text: "Geohash 9 (2x2)" },
+    { id: "tileGeohash9_4x4", text: "Geohash 9 (4x4)" },
+];
+
 export const groupNames = ["POOR", "FAIR", "GOOD", "EXCELLENT"];
 export const groupLimits = [-200, -110, -102, -97, 0];
 export const minCatIndex = 1;

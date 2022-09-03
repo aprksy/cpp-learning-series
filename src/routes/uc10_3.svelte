@@ -53,6 +53,7 @@
         MultiSelect,
         Link,
         Pagination,
+        Dropdown,
     } from "carbon-components-svelte";
     import { Upload, View, Download, Area, AreaCustom, WatsonHealthCircleMeasurement, ChartNetwork, Reset, CheckboxChecked, OrderDetails, Launch, Settings, Number_0, JoinRight, Label } from "carbon-icons-svelte";
     import Drawer from 'svelte-drawer-component';
@@ -84,6 +85,7 @@
     let mapPage=1;
     let selectedDate="2022-05-20";
     let selectedRegion="01";
+    let selectedGridSize="tileCovmo";
     let siteNames;
     let drawOptions;
     let exportPrefix = '20220520-boundaryId';
@@ -421,18 +423,37 @@
                 <div class="container row space-between" style="width:calc(100%); height:40px;">
                     <div style="width:50%">
                         <DatePicker 
+                            light
                             datePickerType="single" 
                             bind:value={selectedDate} 
                             dateFormat="Y-m-d">
                             <DatePickerInput size="sm" placeholder="mm/dd/yyyy" />
                         </DatePicker>
                     </div>
-                    <div style="width:50%">
-                        <ComboBox
+                    <div style="width:25%">
+                        <Dropdown
+                            type="inline"
                             size="sm"
                             placeholder="Select regional"
                             bind:selectedId={selectedRegion}
                             items={defaults.regionals}
+                            on:select={(e) => {
+                                //storeRegionalsSelected.set(e.detail.selectedItem)
+                                // getSites()
+                            }}
+                            on:clear={(e) => {
+                                //storeRegionalsSelected.set({})
+                                //storeSites.set([]);
+                            }}
+                        />
+                    </div>
+                    <div style="width:25%">
+                        <Dropdown
+                            type="inline"
+                            size="sm"
+                            placeholder="Select grid size"
+                            bind:selectedId={selectedGridSize}
+                            items={defaults.gridSizes}
                             on:select={(e) => {
                                 //storeRegionalsSelected.set(e.detail.selectedItem)
                                 // getSites()
@@ -448,6 +469,7 @@
                 <div class="container row space-between" style="width:calc(100%); align-items: center; height:40px;">
                     <div class="container row space-between" style="width:calc(50% - 0); align-items:center;">
                         <ComboBox
+                            light
                             size="sm"
                             placeholder="Select from registered boundary"
                             items={boundaries}
@@ -457,8 +479,7 @@
                                     date: selectedDate.replace(/-/g, ''),
                                     region: selectedRegion,
                                     boundaryId: boundaryId,
-                                    // tileField: 'tileCovmo',
-                                    tileField: 'tileGeohash9',
+                                    tileField: selectedGridSize,
                                     kpi: 'rsrp',
                                 }
                                 await client.performSimulation(params, onSimulationCompleted);
@@ -479,6 +500,7 @@
                                 maps.clearAllMaps();
                                 computeStatistics({}, {});
                                 setupChartsData({}, {});
+                                e.detail.selectedItem = null;
                             }}
                         />
                         <Button 
@@ -493,6 +515,7 @@
                     <div style="width:12px"></div>
                     <div style="width:calc(50% + 0px)">
                         <ComboBox
+                            light
                             size="sm"
                             placeholder="Select site to simulate dismantle"
                             items={siteNames}
