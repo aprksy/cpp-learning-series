@@ -1,9 +1,7 @@
 #include <iostream>
 
-int main(int argc, char* argv [], char* envp[]) {
-    int i = 0;
-    while (envp[i] != nullptr) {
-        std::cout << envp[i] << std::endl;
-        ++i;
+int main(int argc, char** argv, char** envp) {
+    for (char** iter=envp; *iter!=nullptr; ++iter) {
+        std::cout << *iter << std::endl;
     }
 }
