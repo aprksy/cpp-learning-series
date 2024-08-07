@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 3.10)
 project(Helloworld)
 find_package(fmt CONFIG REQUIRED)
 add_executable(${PROJECT_NAME} main.cpp)
-target_link_library(#{PROJECT_NAME} PRIVATE fmt::fmt)
+target_link_libraries(${PROJECT_NAME} PRIVATE fmt::fmt)
 ```
 CMakePresets.json
 ```json
